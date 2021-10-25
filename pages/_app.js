@@ -1,5 +1,6 @@
-import '../styles/globals.css';
+import { Global } from '@emotion/react';
 import Head from 'next/head';
+import { globalStyles } from '../utils/styles';
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -10,6 +11,7 @@ function MyApp({ Component, pageProps }) {
         <link rel="apple-touch-icon" href="/icon-apple-touch.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
+      <Global styles={globalStyles} />
       <Component {...pageProps} />
     </>
   );
