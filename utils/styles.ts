@@ -1,6 +1,11 @@
 import { css } from '@emotion/react';
 
 const blue = '#2799E0';
+const darkGray = '#999999';
+const middleGray = '#C4C4C4';
+const lightGray = '#E5E5E5';
+
+// standard width: 1440, standard height: 1024 (see figma)
 
 const scale = {
   1: 1,
@@ -31,6 +36,8 @@ const scale = {
   26: 512,
   27: 624,
   28: 800,
+  29: 1024,
+  30: 1248,
 };
 
 export const globalStyles = css`
@@ -51,8 +58,6 @@ export const globalStyles = css`
     margin: 0;
   }
   body {
-    background: url('bluejay_desktop_background1.webp') no-repeat left top;
-    background-size: cover;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
@@ -64,6 +69,8 @@ export const globalStyles = css`
 `;
 
 export const indexStyles = css`
+  background: url('bluejay_desktop_background1.webp') no-repeat left top;
+  background-size: cover;
   > div {
     position: absolute;
     inset: ${scale[10]}px 0 0 ${scale[17]}px;
@@ -104,6 +111,300 @@ export const indexStyles = css`
         width: ${scale[22]}px;
         height: ${scale[12]}px;
         font-size: ${scale[8]};
+      }
+    }
+  }
+`;
+
+export const layoutStyles = (screenHeight: number, screenWidth: number) => css`
+  width: ${scale[18]}px;
+  background-color: ${darkGray};
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${blue};
+    width: ${(scale[16] * screenHeight) / 1024}px;
+    height: ${(scale[16] * screenHeight) / 1024}px;
+    border-radius: 100%;
+    margin-top: ${(scale[7] * screenHeight) / 1024}px;
+    img {
+      height: ${(scale[16] * screenHeight) / 1024}px;
+      margin-right: ${scale[5]};
+    }
+  }
+  .ticket-filter-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: ${(scale[26] * screenHeight) / 1024}px;
+    width: ${scale[16]}px;
+    background-color: ${middleGray};
+    margin-top: ${(scale[6] * screenHeight) / 1024}px;
+    p {
+      font-size: ${scale[8]};
+      font-weight: bold;
+      margin: ${(scale[9] * screenHeight) / 1024}px 0
+        ${(scale[4] * screenHeight) / 1024}px 0;
+    }
+    img {
+      width: ${(scale[14] * screenHeight) / 1024}px;
+      margin-top: ${(scale[6] * screenHeight) / 1024}px;
+      :nth-of-type(2) {
+        width: ${(scale[15] * screenHeight) / 1024}px;
+        margin-left: ${(scale[3] * screenHeight) / 1024}px;
+      }
+      :last-of-type {
+        margin-top: ${(scale[9] * screenHeight) / 1024}px;
+      }
+    }
+  }
+  > img {
+    height: ${(scale[14] * screenHeight) / 1024}px;
+    margin-top: ${(scale[8] * screenHeight) / 1024}px;
+  }
+`;
+
+export const allTicketsStyles = css`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  inset: 0 0 0 ${scale[18]}px;
+  width: calc(100vw - ${scale[18]}px);
+  height: 100vh;
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    background-color: black;
+    width: 100%;
+    min-width: ${scale[27]}px;
+    height: ${scale[14]}px;
+  }
+  .tile-area {
+    width: 100%;
+    min-width: ${scale[27]}px;
+    height: calc(100vh - ${scale[14]}px);
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+// inside .top-bar
+
+export const selectCategoryStyles = (screenWidth: number) => css`
+  width: ${(scale[24] * screenWidth) / 1440}px;
+  min-width: ${scale[18]}px;
+
+  height: ${scale[10]}px;
+  background-color: white;
+  margin-left: ${scale[11]}px;
+  display: flex;
+  align-items: center;
+
+  > div {
+    width: ${scale[10]}px;
+    height: ${scale[10]}px;
+    background-color: ${middleGray};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .triangle {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: ${scale[8]}px ${scale[9] / 2}px 0 ${scale[9] / 2}px;
+      border-color: #000000 transparent transparent transparent;
+    }
+  }
+  p {
+    font-size: ${scale[7]};
+    font-weight: bold;
+    margin-left: ${scale[6]}px;
+  }
+`;
+
+// inside .top-bar
+
+export const searchBarStyles = (screenWidth: number) => css`
+  width: ${(scale[27] * screenWidth) / 1440}px;
+  min-width: ${scale[25]}px;
+  max-width: ${scale[27]}px;
+  height: ${scale[10]}px;
+  background: white url('search-icon.png') no-repeat
+    ${(scale[6] * screenWidth) / 1440}px;
+  background-size: contain;
+  border-radius: ${scale[6]}px;
+  border: 0;
+  margin-left: ${(scale[11] * screenWidth) / 1440}px;
+  text-indent: ${scale[13]}px;
+  font-size: ${scale[7]};
+  font-weight: bold;
+  &::placeholder {
+    color: gray;
+    font-style: italic;
+    font-weight: bold;
+  }
+`;
+
+// inside tile-area
+
+export const tileStyles = (screenWidth: number) => css`
+  background-color: ${blue};
+  width: ${(scale[30] * screenWidth) / 1440}px;
+  min-width: ${scale[29]}px;
+  max-width: ${scale[30]}px;
+  height: ${scale[18]}px;
+  border-radius: ${scale[6]}px;
+  margin-top: ${scale[9]}px;
+  margin-left: ${scale[8]}px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+
+  &:first-of-type {
+    margin-top: ${scale[6]}px;
+  }
+
+  .rectangular-box {
+    height: ${scale[17]}px;
+    width: ${((scale[30] - scale[13]) * screenWidth) / 1440}px;
+    min-width: ${scale[29] - scale[13]}px;
+    max-width: ${scale[30] - scale[13]}px;
+    margin-left: ${scale[8]}px;
+    background-color: white;
+    display: grid;
+    grid-template-columns: 16% 15% 12% 10% 9% 16% 22%;
+    grid-template-rows: 50% 50%;
+
+    > div {
+      border-right: dotted 2px black;
+      background-color: ${lightGray};
+      display: flex;
+      flex-direction: column;
+
+      p {
+        font-weight: bold;
+        font-size: ${scale[7]}px;
+        margin-top: ${scale[4]}px;
+        margin-left: ${scale[4]}px;
+        span {
+          font-size: ${scale[6]}px;
+        }
+      }
+    }
+
+    .status-box {
+      grid-row: 1/2;
+      grid-column: 1/2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 0;
+      background-color: #fff8b6;
+      p {
+        font-size: ${scale[9]}px;
+        margin-top: 0;
+      }
+    }
+
+    .title-box {
+      grid-row: 1/2;
+      grid-column: 2/8;
+      border-right: 0;
+      background-color: white;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+
+      p {
+        font-size: ${scale[10]}px;
+        margin: 0 0 0 ${scale[6]}px;
+        font-weight: normal;
+      }
+    }
+    .ticket-number-box {
+      grid-row: 2/3;
+      grid-column: 1/2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      p {
+        font-size: ${scale[8]}px;
+        margin-top: 0;
+      }
+    }
+    .last-response-box {
+      grid-row: 2/3;
+      grid-column: 2/3;
+      p {
+        &:first-of-type {
+          font-size: ${scale[6]}px;
+        }
+      }
+    }
+    .customer-id-box {
+      grid-row: 2/3;
+      grid-column: 3/4;
+      p {
+        &:first-of-type {
+          font-size: ${scale[6]}px;
+        }
+      }
+    }
+    .category-box {
+      grid-row: 2/3;
+      grid-column: 4/5;
+      p {
+        &:first-of-type {
+          font-size: ${scale[6]}px;
+        }
+      }
+    }
+    .priority-box {
+      grid-row: 2/3;
+      grid-column: 5/6;
+      p {
+        &:first-of-type {
+          font-size: ${scale[6]}px;
+        }
+      }
+    }
+    .created-box {
+      grid-row: 2/3;
+      grid-column: 6/7;
+      p {
+        &:first-of-type {
+          font-size: ${scale[6]}px;
+        }
+      }
+    }
+    .assigned-box {
+      grid-row: 2/3;
+      grid-column: 7/8;
+      display: flex;
+      flex-direction: row;
+      border: 0;
+      p {
+        &:first-of-type {
+          font-size: ${scale[6]}px;
+        }
+      }
+      img {
+        margin-left: ${scale[6]}px;
+      }
+      .assigned-date-box {
+        p {
+          font-size: ${scale[6]}px;
+          margin-left: ${scale[6]}px;
+        }
       }
     }
   }
