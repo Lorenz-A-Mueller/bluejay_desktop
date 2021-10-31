@@ -1,6 +1,24 @@
+import {
+  ApolloClient,
+  ApolloProvider,
+  gql,
+  InMemoryCache,
+  useQuery,
+} from '@apollo/client';
 import { Global } from '@emotion/react';
+import { createHttpLink } from 'apollo-link-http';
 import Head from 'next/head';
 import { globalStyles } from '../utils/styles';
+
+const link = createHttpLink({
+  // uri: 'https://api-bluejay.herokuapp.com/graphql',
+  uri: 'http://localhost:4000/graphql',
+  credentials: 'include',
+});
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link,
+});
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -11,8 +29,10 @@ function MyApp({ Component, pageProps }) {
         <link rel="apple-touch-icon" href="/icon-apple-touch.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <Global styles={globalStyles} />
-      <Component {...pageProps} />
+      <ApolloProvider client={client}>
+        <Global styles={globalStyles} />
+        <Component {...pageProps} />
+      </ApolloProvider>
     </>
   );
 }

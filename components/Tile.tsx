@@ -1,16 +1,21 @@
 import { tileStyles } from '../utils/styles';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
-export default function Tile() {
+type Props = {
+  status: string;
+  title: string;
+};
+
+export default function Tile(props: Props) {
   const screenWidth = useWindowDimensions().width;
   return (
     <div css={tileStyles(screenWidth)}>
       <div className="rectangular-box">
         <div className="status-box">
-          <p>ONGOING</p>
+          <p>{props.status}</p>
         </div>
         <div className="title-box">
-          <p>This is a placeholder text for the title (2) </p>
+          <p>{props.title} (2) </p>
         </div>
         <div className="ticket-number-box">
           <p>#3333333333 </p>
