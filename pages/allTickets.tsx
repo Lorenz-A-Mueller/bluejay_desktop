@@ -52,22 +52,19 @@ export default function AllTickets() {
         <div className="tile-area">
           {data &&
             data.tickets.map((ticket) => (
-              <Tile key="abc" status={ticket.status} title={ticket.title} />
+              <Tile
+                key={ticket.created}
+                status={ticket.status}
+                ticketNumber={ticket.ticket_number}
+                title={ticket.title}
+                created={ticket.created}
+                lastResponse={ticket.last_response}
+                category={ticket.category}
+                priority={ticket.priority}
+                assigneeId={ticket.assignee_id}
+                customerId={ticket.customer_id}
+              />
             ))}
-          {/* <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile />
-          <Tile /> */}
         </div>
       </main>
     </Layout>
