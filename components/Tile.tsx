@@ -1,6 +1,16 @@
+import {
+  ApolloClient,
+  ApolloProvider,
+  gql,
+  InMemoryCache,
+  useApolloClient,
+  useLazyQuery,
+  useQuery,
+} from '@apollo/client';
 import { BreakingChangeType } from 'graphql';
 import { useEffect, useState } from 'react';
 import { tileStyles } from '../utils/styles';
+import { transformTimestampIntoDatetime } from '../utils/transfromTimestampIntoDatetime';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 type Props = {
@@ -15,10 +25,39 @@ type Props = {
   ticketNumber: string;
 };
 
+const getCustomerNumberQuery = gql`
+  query ($idInput: ID!) {
+    customer(search: { id: $idInput }) {
+      number
+    }
+  }
+`;
+
 export default function Tile(props: Props) {
   const [statusBoxColor, setStatusBoxColor] = useState('#fff8b6');
+  const [createdDatetime, setCreatedDatetime] = useState('');
+  const [lastResponseDatetime, setLastResponseDatetime] = useState('');
+  const [customerNumber, setCustomerNumber] = useState('');
+  console.log('props.customerId', props.customerId);
+  const customerIdAsString = `"${props.customerId}"`;
+  console.log('customerIdAsString', customerIdAsString);
+  console.log(typeof props.customerId);
+
+  const [getCustomerNumber, { loading, error, data }] = useLazyQuery(
+    getCustomerNumberQuery,
+    {
+      variables: { idInput: '1' },
+      onCompleted: () => {
+        console.log('data', data);
+        setCustomerNumber(data.customer.number);
+      },
+      // must be set so the query doesn't use the cache (could not be called several times)
+      fetchPolicy: 'network-only',
+    },
+  );
 
   useEffect(() => {
+    // get StatusBoxColor
     switch (props.status) {
       case 'NEW':
         setStatusBoxColor('#89FF89');
@@ -32,7 +71,14 @@ export default function Tile(props: Props) {
       default:
         setStatusBoxColor('#FFF8B6');
     }
-  }, [props.status]);
+
+    // convert timestamps into daytimes
+    setCreatedDatetime(transformTimestampIntoDatetime(props.created));
+    setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
+
+    // get Customer number from id
+    getCustomerNumber();
+  }, [props.status, props.created, props.lastResponse]);
   const screenWidth = useWindowDimensions().width;
 
   return (
@@ -50,13 +96,13 @@ export default function Tile(props: Props) {
         <div className="last-response-box">
           <p>last Response</p>
           <p>
-            {props.lastResponse}
-            <span>12:12pm</span>
+            {lastResponseDatetime.slice(0, -5)}
+            <span>&nbsp;{lastResponseDatetime.slice(-5)}</span>
           </p>
         </div>
         <div className="customer-id-box">
-          <p>customer ID</p>
-          <p>{props.customerId}</p>
+          <p>customer</p>
+          <p>{customerNumber}</p>
         </div>
         <div className="category-box">
           <p>category</p>
@@ -69,7 +115,8 @@ export default function Tile(props: Props) {
         <div className="created-box">
           <p>created</p>
           <p>
-            {props.created} <span>12:12pm</span>
+            {createdDatetime.slice(0, -5)}
+            <span>&nbsp;{createdDatetime.slice(-5)}</span>
           </p>
         </div>
         <div className="assigned-box">
