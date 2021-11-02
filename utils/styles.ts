@@ -4,6 +4,8 @@ const blue = '#2799E0';
 const darkGray = '#999999';
 const middleGray = '#C4C4C4';
 const lightGray = '#E5E5E5';
+const orange = '#FFC671';
+const green = '#89FF89';
 
 // standard width: 1440, standard height: 1024 (see figma)
 
@@ -268,6 +270,11 @@ export const tileStyles = (screenWidth: number) => css`
   display: flex;
   align-items: center;
 
+  color: black; // must specify bc it is a button now (which are white)
+  &:hover {
+    cursor: pointer;
+  }
+
   &:first-of-type {
     margin-top: ${scale[6]}px;
   }
@@ -405,6 +412,162 @@ export const tileStyles = (screenWidth: number) => css`
           font-size: ${scale[6]}px;
           margin-left: ${scale[6]}px;
         }
+      }
+    }
+  }
+`;
+
+export const messagePanelStyles = css`
+  position: absolute;
+  right: 16px; // place for scroll-bar??
+  top: ${scale[14]}px;
+  width: ${scale[28]}px;
+  height: calc(100vh - ${scale[14]}px);
+  background-color: rgba(255, 255, 255, 90%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .blue-square {
+    width: ${scale[27] + scale[15]}px;
+    height: ${scale[28] + scale[15]}px;
+    background-color: ${blue};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .title-bar {
+      margin-top: ${scale[5]}px;
+      border: solid black 1px;
+      width: ${scale[27]}px;
+      height: ${scale[14]}px;
+      background-color: white;
+      font-size: ${scale[10]}px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .reply-container {
+      width: ${scale[27]}px;
+      height: ${scale[16]}px;
+      background-color: white;
+      display: flex;
+      justify-content: space-between;
+      margin-top: ${scale[9]}px;
+      textarea {
+        width: 100%;
+      }
+      button {
+        align-self: flex-end;
+        width: ${scale[18]}px;
+        height: ${scale[12]}px;
+        background-color: ${green};
+        color: black;
+        font-weight: bold;
+        font-size: ${scale[7]}px;
+      }
+    }
+  }
+`;
+
+export const messageFieldStyles = css`
+  height: ${scale[20]}px; // max value
+  max-height: ${scale[20]}px;
+  width: ${scale[27]}px;
+  display: flex;
+  margin-top: ${scale[5]}px;
+
+  .info-field {
+    width: ${scale[27] - scale[26]}px;
+    height: ${scale[16]}px;
+    align-self: center;
+    background-color: ${orange};
+    > p {
+      font-weight: bold;
+    }
+  }
+  .message-display-field {
+    width: ${scale[26]}px;
+    background-color: white;
+    border: solid black 1px;
+  }
+`;
+
+export const headerBarStyles = css`
+  width: ${scale[27]}px;
+  height: ${scale[15]}px;
+  background-color: ${middleGray};
+  margin-top: ${scale[6]}px;
+  display: flex;
+  align-items: center;
+
+  > div {
+    border-right: dotted 2px black;
+    background-color: ${lightGray};
+    display: flex;
+    flex-direction: column;
+
+    p {
+      font-size: ${scale[7]}px;
+      margin-top: ${scale[4]}px;
+      margin-left: ${scale[6]}px;
+      font-weight: bold;
+      span {
+        font-size: ${scale[6]}px;
+      }
+      &:first-of-type {
+        margin-top: ${scale[7]}px;
+      }
+    }
+  }
+
+  .status-square {
+    width: ${scale[27] - scale[26]}px;
+    height: 100%;
+    background-color: ${orange};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    p {
+      margin: 0 0 0 0;
+    }
+  }
+  .customer-id-square {
+    width: 20%;
+    height: 100%;
+    p {
+      &:first-of-type {
+        font-size: ${scale[6]}px;
+      }
+    }
+  }
+  .priority-square {
+    width: 20%;
+    height: 100%;
+    p {
+      &:first-of-type {
+        font-size: ${scale[6]}px;
+      }
+    }
+  }
+  .category-square {
+    width: 20%;
+    height: 100%;
+    p {
+      &:first-of-type {
+        font-size: ${scale[6]}px;
+      }
+    }
+  }
+  .assigned-square {
+    height: 100%;
+    flex: 1; // takes all available space
+    border: 0;
+    p {
+      &:first-of-type {
+        font-size: ${scale[6]}px;
       }
     }
   }

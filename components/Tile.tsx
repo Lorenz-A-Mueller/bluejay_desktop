@@ -7,13 +7,13 @@ import {
   useLazyQuery,
   useQuery,
 } from '@apollo/client';
-import { BreakingChangeType } from 'graphql';
 import { useEffect, useState } from 'react';
 import { tileStyles } from '../utils/styles';
-import { transformTimestampIntoDatetime } from '../utils/transfromTimestampIntoDatetime';
+import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 type Props = {
+  ticketId: string;
   status: string;
   title: string;
   created: string;
@@ -23,6 +23,7 @@ type Props = {
   assigneeId: number;
   customerId: number;
   ticketNumber: string;
+  handleTileClick: (arg0: string) => void;
 };
 
 const getCustomerNumberQuery = gql`
@@ -38,23 +39,20 @@ export default function Tile(props: Props) {
   const [createdDatetime, setCreatedDatetime] = useState('');
   const [lastResponseDatetime, setLastResponseDatetime] = useState('');
   const [customerNumber, setCustomerNumber] = useState('');
-  console.log('props.customerId', props.customerId);
-  const customerIdAsString = `"${props.customerId}"`;
-  console.log('customerIdAsString', customerIdAsString);
-  console.log(typeof props.customerId);
+  // console.log('PROPS.TICKETID', props.ticketId);
 
-  const [getCustomerNumber, { loading, error, data }] = useLazyQuery(
-    getCustomerNumberQuery,
-    {
-      variables: { idInput: '1' },
-      onCompleted: () => {
-        console.log('data', data);
-        setCustomerNumber(data.customer.number);
-      },
-      // must be set so the query doesn't use the cache (could not be called several times)
-      fetchPolicy: 'network-only',
+  // get Customer number from id
+
+  const { loading, error, data } = useQuery(getCustomerNumberQuery, {
+    variables: { idInput: props.customerId },
+    onCompleted: () => {
+      console.log('data', data);
+      setCustomerNumber(data.customer.number);
     },
-  );
+    // must be set so the query doesn't use the cache (could not be called several times)
+    fetchPolicy: 'network-only',
+    skip: !props.customerId,
+  });
 
   useEffect(() => {
     // get StatusBoxColor
@@ -75,14 +73,14 @@ export default function Tile(props: Props) {
     // convert timestamps into daytimes
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
-
-    // get Customer number from id
-    getCustomerNumber();
   }, [props.status, props.created, props.lastResponse]);
   const screenWidth = useWindowDimensions().width;
 
   return (
-    <div css={tileStyles(screenWidth)}>
+    <button
+      css={tileStyles(screenWidth)}
+      onClick={() => props.handleTileClick(props.ticketId)}
+    >
       <div className="rectangular-box">
         <div className="status-box" style={{ backgroundColor: statusBoxColor }}>
           <p>{props.status}</p>
@@ -120,17 +118,27 @@ export default function Tile(props: Props) {
           </p>
         </div>
         <div className="assigned-box">
-          <div>
-            <p>assigned</p>
-            <p>{props.assigneeId} - Jennifer</p>
-          </div>
-          <img src="person.png" alt="a person" />
-          <div className="assigned-date-box">
-            <p>12/07/2021</p>
-            <p>13:24pm</p>
-          </div>
+          {props.assigneeId ? (
+            <>
+              <div>
+                <p>assigned</p>
+
+                <p>{props.assigneeId} - Jennifer</p>
+              </div>
+              <img src="person.png" alt="a person" />
+              <div className="assigned-date-box">
+                <p>12/07/2021</p>
+                <p>13:24pm</p>
+              </div>
+            </>
+          ) : (
+            <div>
+              <p>assigned</p>
+              <p>Not assigned</p>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </button>
   );
 }

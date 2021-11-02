@@ -7,7 +7,9 @@ import {
   useLazyQuery,
   useQuery,
 } from '@apollo/client';
+import { useState } from 'react';
 import Layout from '../components/Layout';
+import MessagePanel from '../components/MessagePanel';
 import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
 import Tile from '../components/Tile';
@@ -32,6 +34,9 @@ const getAllTicketsQuery = gql`
 `;
 
 export default function AllTickets() {
+  const [showMessagePanel, setShowMessagePanel] = useState(false);
+  const [openedTicket, setOpenedTicket] = useState('');
+
   const { loading, error, data } = useQuery(getAllTicketsQuery, {
     onCompleted: () => {
       console.log('data', data);
@@ -41,6 +46,12 @@ export default function AllTickets() {
     },
     // skip:
   });
+  const handleTileClick = (ticketId: string) => {
+    console.log('ticketId', ticketId);
+    console.log(typeof ticketId);
+    setShowMessagePanel((previous) => !previous);
+    setOpenedTicket(ticketId);
+  };
 
   return (
     <Layout>
@@ -53,7 +64,8 @@ export default function AllTickets() {
           {data &&
             data.tickets.map((ticket) => (
               <Tile
-                key={ticket.created}
+                key={`tile-key-${ticket.created}`}
+                ticketId={ticket.id}
                 status={ticket.status}
                 ticketNumber={ticket.ticket_number}
                 title={ticket.title}
@@ -63,10 +75,12 @@ export default function AllTickets() {
                 priority={ticket.priority}
                 assigneeId={ticket.assignee_id}
                 customerId={ticket.customer_id}
+                handleTileClick={handleTileClick}
               />
             ))}
         </div>
       </main>
+      {showMessagePanel && <MessagePanel openedTicket={openedTicket} />}
     </Layout>
   );
 }
