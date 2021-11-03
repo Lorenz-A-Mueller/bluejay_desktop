@@ -67,6 +67,9 @@ export const globalStyles = css`
     border: 0;
     background-color: ${blue};
     color: white;
+    &:hover {
+      cursor: pointer;
+    }
   }
 `;
 
@@ -271,9 +274,6 @@ export const tileStyles = (screenWidth: number) => css`
   align-items: center;
 
   color: black; // must specify bc it is a button now (which are white)
-  &:hover {
-    cursor: pointer;
-  }
 
   &:first-of-type {
     margin-top: ${scale[6]}px;

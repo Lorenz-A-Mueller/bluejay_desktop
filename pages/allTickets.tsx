@@ -7,6 +7,7 @@ import {
   useLazyQuery,
   useQuery,
 } from '@apollo/client';
+import { GetServerSidePropsContext } from 'next';
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import MessagePanel from '../components/MessagePanel';
@@ -84,3 +85,35 @@ export default function AllTickets() {
     </Layout>
   );
 }
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const sessionToken = context.req.cookies.sessionToken;
+  const apiUrl = 'http://localhost:4000/graphql';
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', cookie: sessionToken },
+    body: JSON.stringify({
+      query: `query {
+        employeeSession {
+          id
+        }
+      }`,
+    }),
+  });
+
+  const data = await res.json();
+  if (!data.data.employeeSession) {
+    return {
+      redirect: {
+        destination: '/?returnTo=/allTickets',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
