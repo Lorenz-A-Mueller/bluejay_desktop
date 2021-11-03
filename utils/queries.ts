@@ -27,6 +27,7 @@ export const employeeDataFetch = async (employeeId: string, apiUrl: string) => {
     body: JSON.stringify({
       query: `query {
         employee(search: {id: ${employeeId}}) {
+          id
           first_name
         }
       }`,
@@ -69,8 +70,10 @@ export const getAllTicketsQuery = gql`
   }
 `;
 
-export const deleteSessionQuery = gql`
-query {
-
-}
+export const deleteSessionMutation = gql`
+  mutation ($employee_id: ID!) {
+    deleteEmployeeSession(employee_id: $employee_id) {
+      id
+    }
+  }
 `;

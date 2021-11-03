@@ -1,5 +1,6 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/dist/client/router';
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import MessagePanel from '../components/MessagePanel';
@@ -7,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
 import Tile from '../components/Tile';
 import {
-  deleteSessionQuery,
+  deleteSessionMutation,
   employeeDataFetch,
   employeeSessionFetch,
   getAllTicketsQuery,
@@ -17,23 +18,39 @@ import { Ticket } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 type AllTicketsProps = {
-  employee: { first_name: string };
+  employee: {
+    first_name: string;
+  };
+  employeeId: string;
 };
 
 export default function AllTickets(props: AllTicketsProps) {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
   const screenWidth = useWindowDimensions().width;
+  const router = useRouter();
 
-  const { data } = useQuery(getAllTicketsQuery); // TODO error-handling / loading-handling
-  const [logOut] = useLazyQuery(deleteSessionQuery);
+  const { data } = useQuery(getAllTicketsQuery, {
+    fetchPolicy: 'network-only',
+  }); // TODO error-handling / loading-handling
+
+  const [logOut] = useMutation(deleteSessionMutation, {
+    variables: { employee_id: props.employeeId },
+    onCompleted: (deletedData) => {
+      console.log(deletedData);
+      router.push('/');
+    },
+    fetchPolicy: 'network-only',
+  });
 
   const handleTileClick = (ticketId: string) => {
     setShowMessagePanel((previous) => !previous);
     setOpenedTicket(ticketId);
   };
 
-  const handleLogOutClick = () => {};
+  const handleLogOutClick = () => {
+    logOut();
+  };
 
   return (
     <Layout>
@@ -95,6 +112,7 @@ export const getServerSideProps = async (
   return {
     props: {
       employee: data2.data.employee,
+      employeeId,
     },
   };
 };
