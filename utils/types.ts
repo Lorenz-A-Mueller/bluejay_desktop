@@ -26,3 +26,16 @@ export type TileProps = {
   ticketNumber: string;
   handleTileClick: (arg0: string) => void;
 };
+
+export type HeaderProps = {
+  ticket:
+    | {
+        status: string;
+        priority: string;
+        category: string;
+        assignee_id: string;
+        ticket_number: string;
+        customer_id: string;
+      }
+    | undefined;
+};

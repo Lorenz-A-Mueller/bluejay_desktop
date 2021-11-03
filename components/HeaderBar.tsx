@@ -1,19 +1,7 @@
 import { headerBarStyles } from '../utils/styles';
+import { HeaderProps } from '../utils/types';
 
-type Props = {
-  ticket:
-    | {
-        status: string;
-        priority: string;
-        category: string;
-        assignee_id: string;
-        ticket_number: string;
-        customer_id: string;
-      }
-    | undefined;
-};
-
-export default function HeaderBar(props: Props) {
+export default function HeaderBar(props: HeaderProps) {
   console.log('props.ticket', props.ticket);
   return (
     <div css={headerBarStyles}>

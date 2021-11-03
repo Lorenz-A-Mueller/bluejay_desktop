@@ -11,6 +11,23 @@ export const employeeSessionFetch = async (
       query: `query {
         employeeSession {
           id
+          employee_id
+        }
+      }`,
+    }),
+  });
+  return data;
+};
+
+export const employeeDataFetch = async (employeeId: string, apiUrl: string) => {
+  console.log('employeeId', employeeId);
+  const data = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `query {
+        employee(search: {id: ${employeeId}}) {
+          first_name
         }
       }`,
     }),
@@ -50,4 +67,10 @@ export const getAllTicketsQuery = gql`
       messages
     }
   }
+`;
+
+export const deleteSessionQuery = gql`
+query {
+
+}
 `;

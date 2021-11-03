@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useState } from 'react';
 import Layout from '../components/Layout';
@@ -6,27 +6,45 @@ import MessagePanel from '../components/MessagePanel';
 import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
 import Tile from '../components/Tile';
-import { employeeSessionFetch, getAllTicketsQuery } from '../utils/queries';
+import {
+  deleteSessionQuery,
+  employeeDataFetch,
+  employeeSessionFetch,
+  getAllTicketsQuery,
+} from '../utils/queries';
 import { allTicketsStyles } from '../utils/styles';
 import { Ticket } from '../utils/types';
+import useWindowDimensions from '../utils/useWindowDimensions';
 
-export default function AllTickets() {
+type AllTicketsProps = {
+  employee: { first_name: string };
+};
+
+export default function AllTickets(props: AllTicketsProps) {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
+  const screenWidth = useWindowDimensions().width;
 
   const { data } = useQuery(getAllTicketsQuery); // TODO error-handling / loading-handling
+  const [logOut] = useLazyQuery(deleteSessionQuery);
 
   const handleTileClick = (ticketId: string) => {
     setShowMessagePanel((previous) => !previous);
     setOpenedTicket(ticketId);
   };
 
+  const handleLogOutClick = () => {};
+
   return (
     <Layout>
-      <main css={allTicketsStyles}>
+      <main css={screenWidth && allTicketsStyles(screenWidth)}>
         <div className="top-bar">
           <SelectCategory />
           <SearchBar />
+          <p style={{ color: 'white' }}>{props.employee.first_name}</p>
+          <button onClick={handleLogOutClick}>
+            <img src="logout-icon.png" alt="a stylized door with an arrow" />
+          </button>
         </div>
         <div className="tile-area">
           {data &&
@@ -68,8 +86,15 @@ export const getServerSideProps = async (
       },
     };
   }
+  console.log('data.data.employeeSession', data.data.employeeSession);
+  const employeeId = data.data.employeeSession.employee_id;
+  const res2 = await employeeDataFetch(employeeId, apiUrl);
+  const data2 = await res2.json();
+  console.log('data2', data2);
 
   return {
-    props: {},
+    props: {
+      employee: data2.data.employee,
+    },
   };
 };

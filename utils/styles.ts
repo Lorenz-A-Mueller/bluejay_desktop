@@ -174,7 +174,7 @@ export const layoutStyles = (screenHeight: number) => css`
   }
 `;
 
-export const allTicketsStyles = css`
+export const allTicketsStyles = (screenWidth: number) => css`
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -189,6 +189,18 @@ export const allTicketsStyles = css`
     width: 100%;
     min-width: ${scale[27]}px;
     height: ${scale[14]}px;
+    > p {
+      margin-left: ${(scale[11] * screenWidth) / 1440}px;
+      font-size: ${scale[9]}px;
+      font-weight: bold;
+    }
+    button {
+      margin-left: ${(scale[7] * screenWidth) / 1440}px;
+      height: ${scale[10]}px;
+      img {
+        height: 100%;
+      }
+    }
   }
   .tile-area {
     width: 100%;
