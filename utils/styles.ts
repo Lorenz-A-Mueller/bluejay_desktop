@@ -121,7 +121,7 @@ export const indexStyles = css`
   }
 `;
 
-export const layoutStyles = (screenHeight: number, screenWidth: number) => css`
+export const layoutStyles = (screenHeight: number) => css`
   width: ${scale[18]}px;
   background-color: ${darkGray};
   height: 100vh;

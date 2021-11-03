@@ -1,12 +1,4 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  gql,
-  InMemoryCache,
-  useApolloClient,
-  useLazyQuery,
-  useQuery,
-} from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useState } from 'react';
 import Layout from '../components/Layout';
@@ -14,42 +6,17 @@ import MessagePanel from '../components/MessagePanel';
 import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
 import Tile from '../components/Tile';
+import { employeeSessionFetch, getAllTicketsQuery } from '../utils/queries';
 import { allTicketsStyles } from '../utils/styles';
-
-const getAllTicketsQuery = gql`
-  query {
-    tickets {
-      id
-      ticket_number
-      status
-      last_response
-      customer_id
-      category
-      priority
-      created
-      assignee_id
-      title
-      messages
-    }
-  }
-`;
+import { Ticket } from '../utils/types';
 
 export default function AllTickets() {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
 
-  const { loading, error, data } = useQuery(getAllTicketsQuery, {
-    onCompleted: () => {
-      console.log('data', data);
-    },
-    onError: () => {
-      console.log('error: ', error);
-    },
-    // skip:
-  });
+  const { data } = useQuery(getAllTicketsQuery); // TODO error-handling / loading-handling
+
   const handleTileClick = (ticketId: string) => {
-    console.log('ticketId', ticketId);
-    console.log(typeof ticketId);
     setShowMessagePanel((previous) => !previous);
     setOpenedTicket(ticketId);
   };
@@ -63,7 +30,7 @@ export default function AllTickets() {
         </div>
         <div className="tile-area">
           {data &&
-            data.tickets.map((ticket) => (
+            data.tickets.map((ticket: Ticket) => (
               <Tile
                 key={`tile-key-${ticket.created}`}
                 ticketId={ticket.id}
@@ -91,18 +58,7 @@ export const getServerSideProps = async (
 ) => {
   const sessionToken = context.req.cookies.sessionToken;
   const apiUrl = 'http://localhost:4000/graphql';
-  const res = await fetch(apiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', cookie: sessionToken },
-    body: JSON.stringify({
-      query: `query {
-        employeeSession {
-          id
-        }
-      }`,
-    }),
-  });
-
+  const res = await employeeSessionFetch(sessionToken, apiUrl);
   const data = await res.json();
   if (!data.data.employeeSession) {
     return {

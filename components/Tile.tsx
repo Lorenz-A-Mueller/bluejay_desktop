@@ -1,52 +1,23 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  gql,
-  InMemoryCache,
-  useApolloClient,
-  useLazyQuery,
-  useQuery,
-} from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import { getCustomerNumberQuery } from '../utils/queries';
 import { tileStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
+import { TileProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
-type Props = {
-  ticketId: string;
-  status: string;
-  title: string;
-  created: string;
-  lastResponse: string;
-  category: string;
-  priority: string;
-  assigneeId: number;
-  customerId: number;
-  ticketNumber: string;
-  handleTileClick: (arg0: string) => void;
-};
-
-const getCustomerNumberQuery = gql`
-  query ($idInput: ID!) {
-    customer(search: { id: $idInput }) {
-      number
-    }
-  }
-`;
-
-export default function Tile(props: Props) {
+export default function Tile(props: TileProps) {
   const [statusBoxColor, setStatusBoxColor] = useState('#fff8b6');
   const [createdDatetime, setCreatedDatetime] = useState('');
   const [lastResponseDatetime, setLastResponseDatetime] = useState('');
   const [customerNumber, setCustomerNumber] = useState('');
-  // console.log('PROPS.TICKETID', props.ticketId);
 
   // get Customer number from id
 
-  const { loading, error, data } = useQuery(getCustomerNumberQuery, {
+  const { data } = useQuery(getCustomerNumberQuery, {
+    // TODO: error-handling, loading-handling
     variables: { idInput: props.customerId },
     onCompleted: () => {
-      console.log('data', data);
       setCustomerNumber(data.customer.number);
     },
     // must be set so the query doesn't use the cache (could not be called several times)
@@ -54,8 +25,9 @@ export default function Tile(props: Props) {
     skip: !props.customerId,
   });
 
+  // get StatusBoxColor according to status and convert timestamps into readable date-times
+
   useEffect(() => {
-    // get StatusBoxColor
     switch (props.status) {
       case 'NEW':
         setStatusBoxColor('#89FF89');
@@ -69,16 +41,15 @@ export default function Tile(props: Props) {
       default:
         setStatusBoxColor('#FFF8B6');
     }
-
-    // convert timestamps into daytimes
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
   }, [props.status, props.created, props.lastResponse]);
+
   const screenWidth = useWindowDimensions().width;
 
   return (
     <button
-      css={tileStyles(screenWidth)}
+      css={screenWidth && tileStyles(screenWidth)}
       onClick={() => props.handleTileClick(props.ticketId)}
     >
       <div className="rectangular-box">
@@ -86,7 +57,7 @@ export default function Tile(props: Props) {
           <p>{props.status}</p>
         </div>
         <div className="title-box">
-          <p>{props.title} (2) </p>
+          <p>{props.title} (2) </p> {/* TODO: show Number of messages */}
         </div>
         <div className="ticket-number-box">
           <p>{props.ticketNumber}</p>

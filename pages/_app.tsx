@@ -1,12 +1,7 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  gql,
-  InMemoryCache,
-  useQuery,
-} from '@apollo/client';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Global } from '@emotion/react';
 import { createHttpLink } from 'apollo-link-http';
+import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { globalStyles } from '../utils/styles';
 
@@ -17,10 +12,10 @@ const link = createHttpLink({
 });
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link,
+  link: link as any,
 });
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>

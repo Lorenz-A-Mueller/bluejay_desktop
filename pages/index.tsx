@@ -1,36 +1,29 @@
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import { useState } from 'react';
+import { employeeSessionFetch, logInValidationQuery } from '../utils/queries';
 import { indexStyles } from '../utils/styles';
-
-const logInValidationQuery = gql`
-  query ($employeeNumber: String!, $employeePassword: String!) {
-    employee(search: { number: [$employeeNumber, $employeePassword] }) {
-      last_name
-    }
-  }
-`;
 
 export default function Home() {
   const [employeeNumberInput, setEmployeeNumberInput] = useState('');
   const [employeePasswordInput, setEmployeePasswordInput] = useState('');
   const [wasClicked, setWasClicked] = useState(false);
-  const [accessDenied, setAccessDenied] = useState(false);
+  // const [accessDenied, setAccessDenied] = useState(false);         TODO: have animation no accessDenied (shake)
   const router = useRouter();
 
-  const { loading, error, data } = useQuery(logInValidationQuery, {
+  useQuery(logInValidationQuery, {
+    // TODO: set data (first_name of query) in the application interface
     variables: {
       employeeNumber: employeeNumberInput,
       employeePassword: employeePasswordInput,
     },
     onCompleted: () => {
-      console.log('data', data);
       setWasClicked(false);
       setEmployeeNumberInput('');
       setEmployeePasswordInput('');
-      setAccessDenied(false);
+      // setAccessDenied(false);
       const destination =
         typeof router.query.returnTo === 'string' && router.query.returnTo
           ? router.query.returnTo
@@ -39,10 +32,9 @@ export default function Home() {
       router.push(destination);
     },
     onError: () => {
-      console.log('error: ', error);
       setEmployeeNumberInput('');
       setEmployeePasswordInput('');
-      setAccessDenied(true);
+      // setAccessDenied(true);
       setWasClicked(false);
     },
     skip: !wasClicked,
@@ -97,29 +89,16 @@ export const getServerSideProps = async (
   ) {
     return {
       redirect: {
-        destination: `https://${context.req.headers.host}/login`,
+        destination: `https://${context.req.headers.host}/`,
         permanent: true,
       },
     };
   }
 
   const sessionToken = context.req.cookies.sessionToken;
-  console.log('sessionToken in gSSP: ', sessionToken);
   const apiUrl = 'http://localhost:4000/graphql';
-  const res = await fetch(apiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', cookie: sessionToken },
-    body: JSON.stringify({
-      query: `query {
-        employeeSession {
-          id
-        }
-      }`,
-    }),
-  });
-
+  const res = await employeeSessionFetch(sessionToken, apiUrl);
   const data = await res.json();
-  console.log('data in gssp!!!!!!!!!!', data);
   if (data.data.employeeSession) {
     return {
       redirect: {
