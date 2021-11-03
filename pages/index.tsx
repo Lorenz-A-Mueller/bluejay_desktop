@@ -95,7 +95,11 @@ export const getServerSideProps = async (
     };
   }
 
-  const sessionToken = context.req.cookies.sessionToken;
+  const sessionToken = context.req.cookies.employeeSessionToken;
+  console.log(
+    'context.req.cookies.employeeSessionToken: ',
+    context.req.cookies.employeeSessionToken,
+  );
   const apiUrl = 'http://localhost:4000/graphql';
   const res = await employeeSessionFetch(sessionToken, apiUrl);
   const data = await res.json();

@@ -56,7 +56,7 @@ export default function AllTickets() {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
-  const sessionToken = context.req.cookies.sessionToken;
+  const sessionToken = context.req.cookies.employeeSessionToken;
   const apiUrl = 'http://localhost:4000/graphql';
   const res = await employeeSessionFetch(sessionToken, apiUrl);
   const data = await res.json();
