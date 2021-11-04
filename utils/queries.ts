@@ -65,7 +65,6 @@ export const getAllTicketsQuery = gql`
       created
       assignee_id
       title
-      messages
     }
   }
 `;
@@ -74,6 +73,57 @@ export const deleteSessionMutation = gql`
   mutation ($employee_id: ID!) {
     deleteEmployeeSession(employee_id: $employee_id) {
       id
+    }
+  }
+`;
+
+export const getCustomerNameQuery = gql`
+  query ($customerId: ID) {
+    customer(search: { id: $customerId }) {
+      first_name
+      last_name
+    }
+  }
+`;
+
+export const getTicketInformationQuery = gql`
+  query ($ticketId: ID) {
+    ticket(id: $ticketId) {
+      ticket_number
+      status
+      last_response
+      customer_id
+      category
+      priority
+      created
+      assignee_id
+      title
+    }
+  }
+`;
+export const getMessageQuery = gql`
+  query ($messageId: ID) {
+    message(id: $messageId) {
+      created
+      content
+      customer_id
+    }
+  }
+`;
+
+export const createMessageMutation = gql`
+  mutation ($customerID: ID!, $content: String!) {
+    createNewMessage(customer_id: $customerID, content: $content) {
+      id
+    }
+  }
+`;
+
+export const getMessagesQuery = gql`
+  query ($ticketID: ID) {
+    messages(ticket_id: $ticketID) {
+      created
+      content
     }
   }
 `;

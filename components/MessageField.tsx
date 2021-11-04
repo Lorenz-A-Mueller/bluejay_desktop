@@ -1,31 +1,18 @@
-import { gql, useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import { createMessageMutation, getCustomerNameQuery } from '../utils/queries';
 import { messageFieldStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
 
-const getCustomerNameQuery = gql`
-  query ($customerId: ID) {
-    customer(search: { id: $customerId }) {
-      first_name
-      last_name
-    }
-  }
-`;
-// const getCustomerNameQuery = gql`
-//   query {
-//     customer(search: { id: "1" }) {
-//       first_name
-//       last_name
-//     }
-//   }
-// `;
-
 type Props = {
-  openedTicket: string;
   message:
     | {
         content: string;
         created: string;
+      }
+    | undefined;
+  ticketData:
+    | {
         customer_id: string;
       }
     | undefined;
@@ -49,12 +36,13 @@ export default function MessageField(props: Props) {
   const [getCustomerName, { loading, error, data }] = useLazyQuery(
     getCustomerNameQuery,
     {
-      variables: { customerId: props.message?.customer_id },
+      variables: { customerId: props.ticketData?.customer_id },
       onCompleted: () => {
         console.log('data HERE', data);
         setCustomerFirstName(data.customer.first_name);
         setCustomerLastName(data.customer.last_name);
       },
+      fetchPolicy: 'network-only',
     },
   );
 
