@@ -6,6 +6,7 @@ const middleGray = '#C4C4C4';
 const lightGray = '#E5E5E5';
 const orange = '#FFC671';
 const green = '#89FF89';
+const red = '#FF8484';
 
 // standard width: 1440, standard height: 1024 (see figma)
 
@@ -440,6 +441,23 @@ export const messagePanelStyles = css`
   justify-content: center;
   align-items: center;
 
+  > button {
+    position: absolute;
+    left: ${scale[5]}px;
+    top: ${scale[6]}px;
+    width: ${scale[10]}px;
+    height: ${scale[10]}px;
+    align-self: flex-start;
+    background-color: ${red};
+    &:hover {
+      border: ${scale[3]}px solid black;
+    }
+    > img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   .blue-square {
     width: ${scale[27] + scale[15]}px;
     height: ${scale[28] + scale[15]}px;
@@ -447,6 +465,7 @@ export const messagePanelStyles = css`
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-y: scroll;
 
     .title-bar {
       margin-top: ${scale[5]}px;
@@ -459,25 +478,30 @@ export const messagePanelStyles = css`
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
     .reply-container {
       width: ${scale[27]}px;
-      height: ${scale[16]}px;
+      height: ${scale[20]}px;
+      /* background-color: ${blue}; */
       background-color: white;
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
       margin-top: ${scale[9]}px;
-      textarea {
-        width: 100%;
-      }
+      margin-bottom: ${scale[9]}px;
+      flex-shrink: 0;
       button {
-        align-self: flex-end;
         width: ${scale[18]}px;
-        height: ${scale[12]}px;
+        height: ${scale[20] - scale[18]}px;
         background-color: ${green};
         color: black;
         font-weight: bold;
         font-size: ${scale[7]}px;
+      }
+      textarea {
+        width: 100%;
+        height: ${scale[18]}px;
       }
     }
   }
@@ -489,6 +513,7 @@ export const messageFieldStyles = css`
   width: ${scale[27]}px;
   display: flex;
   margin-top: ${scale[5]}px;
+  flex-shrink: 0;
 
   .info-field {
     width: ${scale[27] - scale[26]}px;
@@ -513,6 +538,7 @@ export const headerBarStyles = css`
   margin-top: ${scale[6]}px;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 
   > div {
     border-right: dotted 2px black;

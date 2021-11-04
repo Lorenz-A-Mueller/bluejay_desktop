@@ -44,7 +44,7 @@ export default function AllTickets(props: AllTicketsProps) {
   });
 
   const handleTileClick = (ticketId: string) => {
-    setShowMessagePanel((previous) => !previous);
+    setShowMessagePanel(true);
     setOpenedTicket(ticketId);
   };
 
@@ -83,7 +83,14 @@ export default function AllTickets(props: AllTicketsProps) {
             ))}
         </div>
       </main>
-      {showMessagePanel && <MessagePanel openedTicket={openedTicket} />}
+      {showMessagePanel && (
+        <MessagePanel
+          openedTicket={openedTicket}
+          employee={props.employee}
+          employeeId={props.employeeId}
+          setShowMessagePanel={setShowMessagePanel}
+        />
+      )}
     </Layout>
   );
 }

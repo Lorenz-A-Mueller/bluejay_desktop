@@ -7,8 +7,10 @@ import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoD
 type Props = {
   message:
     | {
+        id: string;
         content: string;
         created: string;
+        responder_id: string | undefined;
       }
     | undefined;
   ticketData:
@@ -16,6 +18,9 @@ type Props = {
         customer_id: string;
       }
     | undefined;
+  employee: {
+    first_name: string;
+  };
 };
 
 export default function MessageField(props: Props) {
@@ -48,10 +53,19 @@ export default function MessageField(props: Props) {
 
   console.log('props in Messagefield', props);
   return (
-    <div css={messageFieldStyles}>
+    <div
+      css={messageFieldStyles}
+      style={{
+        flexDirection: props.message.responder_id ? 'row-reverse' : 'row',
+      }}
+    >
       <div className="info-field">
-        <p>{customerFirstName}</p>
-        <p>{customerLastName}</p>
+        <p>
+          {props.message.responder_id
+            ? props.employee.first_name
+            : customerFirstName}
+        </p>
+        <p>{!props.message.responder_id && customerLastName}</p>
         <p>{dateTime.slice(0, -5)}</p>
         <p>{dateTime.slice(-5)}</p>
       </div>

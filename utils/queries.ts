@@ -89,6 +89,7 @@ export const getCustomerNameQuery = gql`
 export const getTicketInformationQuery = gql`
   query ($ticketId: ID) {
     ticket(id: $ticketId) {
+      id
       ticket_number
       status
       last_response
@@ -112,9 +113,22 @@ export const getMessageQuery = gql`
 `;
 
 export const createMessageMutation = gql`
-  mutation ($customerID: ID!, $content: String!) {
-    createNewMessage(customer_id: $customerID, content: $content) {
+  mutation ($ticketID: ID!, $content: String!) {
+    createNewMessage(ticket_id: $ticketID, content: $content) {
       id
+    }
+  }
+`;
+
+export const createMessageWithResponderIdMutation = gql`
+  mutation ($ticketID: ID!, $content: String!, $responderID: ID!) {
+    createNewMessageWithResponderId(
+      ticket_id: $ticketID
+      content: $content
+      responder_id: $responderID
+    ) {
+      id
+      responder_id
     }
   }
 `;
@@ -124,6 +138,8 @@ export const getMessagesQuery = gql`
     messages(ticket_id: $ticketID) {
       created
       content
+      id
+      responder_id
     }
   }
 `;

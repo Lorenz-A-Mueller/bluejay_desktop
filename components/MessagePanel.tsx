@@ -1,7 +1,7 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import {
-  createMessageMutation,
+  createMessageWithResponderIdMutation,
   getMessageQuery,
   getMessagesQuery,
   getTicketInformationQuery,
@@ -12,6 +12,9 @@ import MessageField from './MessageField';
 
 type Props = {
   openedTicket: string;
+
+  employeeId: string | undefined;
+  setShowMessagePanel: (arg: boolean) => void;
 };
 
 export default function MessagePanel(props: Props) {
@@ -48,47 +51,39 @@ export default function MessagePanel(props: Props) {
     fetchPolicy: 'network-only',
   });
 
-  // const [
-  //   sendMessage,
-  //   {
-  //     loading: sendMessageLoading,
-  //     error: sendMessageError,
-  //     data: sendMessageData,
-  //   },
-  // ] = useLazyQuery(createMessageMutation, {
-  //   variables: { customerId: props.message?.customer_id },
-  //   onCompleted: () => {
-  //     console.log('data HERE', data);
-  //     setCustomerFirstName(data.customer.first_name);
-  //     setCustomerLastName(data.customer.last_name);
-  //   },
-  //   fetchPolicy: 'network-only',
-  // });
-
-  // useEffect(() => {
-  //   if (ticketData.messages) {
-  //     checkMessageData();
-  //   }
-  // }, [ticketData]);
-
-  // const [checkMessageData, { loading: loading2, error: error2, data: data2 }] =
-  //   useLazyQuery(getMessageQuery, {
-  //     variables: {
-  //       messageId: ticketData.messages && ticketData.messages[0],
-  //     },
-  //     onCompleted: () => {
-  //       console.log('retrieved message data: ', data2);
-  //       setMessageData(data2);
-  //     },
-  //     fetchPolicy: 'network-only',
-  //   });
-
   const handleMessageSendClick = () => {
-    // sendMessage();
+    console.log('ticketData.id: ', ticketData.id);
+    console.log('newMEssageText: ', newMessageText);
+    console.log('responderID: ', props.employeeId);
+    sendMessage();
   };
+
+  const [
+    sendMessage,
+    {
+      loading: sendMessageLoading,
+      error: sendMessageError,
+      data: sendMessageData,
+    },
+  ] = useMutation(createMessageWithResponderIdMutation, {
+    variables: {
+      ticketID: ticketData.id,
+      content: newMessageText,
+      responderID: props.employeeId,
+    },
+    onCompleted: (thisData) => {
+      console.log('data after creating message with responserId', thisData);
+      getMessages();
+      setNewMessageText('');
+    },
+    fetchPolicy: 'network-only',
+  });
 
   return (
     <div css={messagePanelStyles}>
+      <button onClick={() => props.setShowMessagePanel(false)}>
+        <img src="x-icon.jpg" alt="an 'x'" />
+      </button>
       <div className="blue-square">
         <HeaderBar ticket={data && data.ticket} />
         <div className="title-bar">
@@ -100,15 +95,16 @@ export default function MessagePanel(props: Props) {
               key={`message-key-${message.content}`}
               message={message}
               ticketData={ticketData}
+              employee={props.employee}
             />
           ))}
 
         <div className="reply-container">
+          <button onClick={handleMessageSendClick}>Send</button>
           <textarea
             onChange={(e) => setNewMessageText(e.currentTarget.value)}
-            value={setNewMessageText}
+            value={newMessageText}
           />
-          <button onClick={handleMessageSendClick}>Send</button>
         </div>
       </div>
     </div>
