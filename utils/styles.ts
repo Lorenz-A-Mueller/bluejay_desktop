@@ -491,13 +491,25 @@ export const messagePanelStyles = css`
       margin-top: ${scale[9]}px;
       margin-bottom: ${scale[9]}px;
       flex-shrink: 0;
+      .reply-header {
+        width: 100%;
+        height: ${scale[20] - scale[18]}px;
+        display: flex;
+        justify-content: space-between;
+      }
       button {
         width: ${scale[18]}px;
-        height: ${scale[20] - scale[18]}px;
+        height: 100%;
         background-color: ${green};
         color: black;
         font-weight: bold;
         font-size: ${scale[7]}px;
+        &:nth-of-type(2) {
+          background-color: ${orange};
+        }
+        &:last-of-type {
+          background-color: ${red};
+        }
       }
       textarea {
         width: 100%;

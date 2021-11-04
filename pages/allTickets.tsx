@@ -12,6 +12,7 @@ import {
   employeeDataFetch,
   employeeSessionFetch,
   getAllTicketsQuery,
+  getTicketInformationQuery,
 } from '../utils/queries';
 import { allTicketsStyles } from '../utils/styles';
 import { Ticket } from '../utils/types';
@@ -29,6 +30,8 @@ export default function AllTickets(props: AllTicketsProps) {
   const [openedTicket, setOpenedTicket] = useState('');
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
+
+  console.log('OPENED TICKET', openedTicket);
 
   const { data } = useQuery(getAllTicketsQuery, {
     fetchPolicy: 'network-only',
@@ -51,6 +54,8 @@ export default function AllTickets(props: AllTicketsProps) {
   const handleLogOutClick = () => {
     logOut();
   };
+
+  const handleTicketDeleteClick = (id: string) => {};
 
   return (
     <Layout>
@@ -89,6 +94,7 @@ export default function AllTickets(props: AllTicketsProps) {
           employee={props.employee}
           employeeId={props.employeeId}
           setShowMessagePanel={setShowMessagePanel}
+          handleTicketDeleteClick={handleTicketDeleteClick}
         />
       )}
     </Layout>

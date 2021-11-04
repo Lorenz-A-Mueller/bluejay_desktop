@@ -88,7 +88,7 @@ export const getCustomerNameQuery = gql`
 
 export const getTicketInformationQuery = gql`
   query ($ticketId: ID) {
-    ticket(id: $ticketId) {
+    ticket(search: { id: $ticketId }) {
       id
       ticket_number
       status

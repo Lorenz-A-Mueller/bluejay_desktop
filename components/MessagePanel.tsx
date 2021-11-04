@@ -15,6 +15,7 @@ type Props = {
 
   employeeId: string | undefined;
   setShowMessagePanel: (arg: boolean) => void;
+  handleTicketDeleteClick: (arg: string) => void;
 };
 
 export default function MessagePanel(props: Props) {
@@ -100,7 +101,15 @@ export default function MessagePanel(props: Props) {
           ))}
 
         <div className="reply-container">
-          <button onClick={handleMessageSendClick}>Send</button>
+          <div className="reply-header">
+            <button onClick={handleMessageSendClick}>Send</button>
+            <button onClick={handleMessageSendClick}>Close ticket</button>
+            <button
+              onClick={() => props.handleTicketDeleteClick(props.openedTicket)}
+            >
+              Delete ticket
+            </button>
+          </div>
           <textarea
             onChange={(e) => setNewMessageText(e.currentTarget.value)}
             value={newMessageText}
