@@ -143,3 +143,29 @@ export const getMessagesQuery = gql`
     }
   }
 `;
+
+export const deleteTicketMutation = gql`
+  mutation ($ticketID: ID!) {
+    deleteTicket(id: $ticketID) {
+      id
+      title
+    }
+  }
+`;
+
+export const getStatusQuery = gql`
+  query ($statusID: ID!) {
+    status(id: $statusID) {
+      id
+      status_name
+    }
+  }
+`;
+
+export const changeTicketStatusMutation = gql`
+  mutation ($ticketID: ID!, $statusID: ID!) {
+    changeTicketStatus(id: $ticketID, status: $statusID) {
+      status
+    }
+  }
+`;

@@ -1,14 +1,16 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import MessagePanel from '../components/MessagePanel';
 import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
 import Tile from '../components/Tile';
 import {
+  changeTicketStatusMutation,
   deleteSessionMutation,
+  deleteTicketMutation,
   employeeDataFetch,
   employeeSessionFetch,
   getAllTicketsQuery,
@@ -33,15 +35,57 @@ export default function AllTickets(props: AllTicketsProps) {
 
   console.log('OPENED TICKET', openedTicket);
 
-  const { data } = useQuery(getAllTicketsQuery, {
+  const [getTickets, { data }] = useLazyQuery(getAllTicketsQuery, {
     fetchPolicy: 'network-only',
   }); // TODO error-handling / loading-handling
+
+  useEffect(() => {
+    getTickets();
+  }, [getTickets]);
 
   const [logOut] = useMutation(deleteSessionMutation, {
     variables: { employee_id: props.employeeId },
     onCompleted: (deletedData) => {
       console.log(deletedData);
       router.push('/');
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const [deleteTicket] = useMutation(deleteTicketMutation, {
+    variables: { ticketID: openedTicket },
+    onCompleted: (deletedTicketData) => {
+      console.log(deletedTicketData);
+      setShowMessagePanel(false);
+      getTickets();
+
+      // router.push('/');
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const [closeTicket] = useMutation(changeTicketStatusMutation, {
+    variables: { ticketID: openedTicket, statusID: '3' },
+    onCompleted: (closedTicketStatusData) => {
+      console.log(closedTicketStatusData);
+      setTimeout(() => {
+        setShowMessagePanel(false);
+      }, 500);
+
+      getTickets();
+
+      // router.push('/');
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const [setOngoingTicket] = useMutation(changeTicketStatusMutation, {
+    variables: { ticketID: openedTicket, statusID: '2' },
+    onCompleted: (ongoingTicketData) => {
+      console.log(ongoingTicketData);
+      getTickets();
+
+      // router.push('/');
     },
     fetchPolicy: 'network-only',
   });
@@ -55,7 +99,13 @@ export default function AllTickets(props: AllTicketsProps) {
     logOut();
   };
 
-  const handleTicketDeleteClick = (id: string) => {};
+  const handleTicketDeleteClick = () => {
+    deleteTicket();
+  };
+
+  const handleTicketCloseClick = () => {
+    closeTicket();
+  };
 
   return (
     <Layout>
@@ -63,6 +113,9 @@ export default function AllTickets(props: AllTicketsProps) {
         <div className="top-bar">
           <SelectCategory />
           <SearchBar />
+          <button onClick={() => getTickets()}>
+            <img src="refresh-icon.jpg" alt="two arrows in form of a circle" />
+          </button>
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
           <button onClick={handleLogOutClick}>
             <img src="logout-icon.png" alt="a stylized door with an arrow" />
@@ -95,6 +148,8 @@ export default function AllTickets(props: AllTicketsProps) {
           employeeId={props.employeeId}
           setShowMessagePanel={setShowMessagePanel}
           handleTicketDeleteClick={handleTicketDeleteClick}
+          handleTicketCloseClick={handleTicketCloseClick}
+          setOngoingTicket={setOngoingTicket}
         />
       )}
     </Layout>

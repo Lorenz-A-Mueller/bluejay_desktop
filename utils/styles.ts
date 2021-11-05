@@ -198,6 +198,7 @@ export const allTicketsStyles = (screenWidth: number) => css`
     button {
       margin-left: ${(scale[7] * screenWidth) / 1440}px;
       height: ${scale[10]}px;
+      background-color: transparent;
       img {
         height: 100%;
       }
@@ -491,29 +492,54 @@ export const messagePanelStyles = css`
       margin-top: ${scale[9]}px;
       margin-bottom: ${scale[9]}px;
       flex-shrink: 0;
+      background-color: black;
       .reply-header {
         width: 100%;
         height: ${scale[20] - scale[18]}px;
         display: flex;
-        justify-content: space-between;
-      }
-      button {
-        width: ${scale[18]}px;
-        height: 100%;
-        background-color: ${green};
-        color: black;
-        font-weight: bold;
-        font-size: ${scale[7]}px;
-        &:nth-of-type(2) {
+        grid-gap: ${scale[9]}px;
+        background-color: black;
+        padding: ${scale[4]}px;
+        .refresh-button {
+          margin-left: ${scale[5]}px;
+          padding: ${scale[4]}px;
+          width: ${scale[11]}px;
+          background-color: black;
+          img {
+            width: 100%;
+          }
+        }
+        .send-button {
+          width: ${scale[18]}px;
+          background-color: ${green};
+          font-size: ${scale[7]}px;
+          color: black;
+          font-weight: bold;
+        }
+
+        .close-button {
+          width: ${scale[18]}px;
           background-color: ${orange};
+          font-size: ${scale[7]}px;
+          color: black;
+          font-weight: bold;
         }
-        &:last-of-type {
+        .delete-button {
+          width: ${scale[18]}px;
           background-color: ${red};
+          margin-left: auto;
+          font-size: ${scale[7]}px;
+          color: black;
+          font-weight: bold;
         }
       }
+
       textarea {
         width: 100%;
         height: ${scale[18]}px;
+        font-size: ${scale[8]}px;
+        padding: ${scale[6]}px;
+        margin-top: ${scale[4]}px;
       }
     }
   }
@@ -532,6 +558,7 @@ export const messageFieldStyles = css`
     height: ${scale[16]}px;
     align-self: center;
     background-color: ${orange};
+    padding: ${scale[4]}px;
     > p {
       font-weight: bold;
     }
@@ -540,6 +567,8 @@ export const messageFieldStyles = css`
     width: ${scale[26]}px;
     background-color: white;
     border: solid black 1px;
+    padding: ${scale[6]}px;
+    font-size: ${scale[7]}px;
   }
 `;
 
@@ -581,7 +610,7 @@ export const headerBarStyles = css`
     align-items: center;
     border: 0;
     p {
-      margin: 0 0 0 0;
+      margin: 0 0 ${scale[6]}px 0;
     }
   }
   .customer-id-square {

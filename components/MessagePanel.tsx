@@ -1,4 +1,5 @@
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { isConstValueNode } from 'graphql';
 import { useEffect, useState } from 'react';
 import {
   createMessageWithResponderIdMutation,
@@ -15,7 +16,9 @@ type Props = {
 
   employeeId: string | undefined;
   setShowMessagePanel: (arg: boolean) => void;
-  handleTicketDeleteClick: (arg: string) => void;
+  handleTicketDeleteClick: () => void;
+  handleTicketCloseClick: () => void;
+  setOngoingTicket: () => void;
 };
 
 export default function MessagePanel(props: Props) {
@@ -23,6 +26,7 @@ export default function MessagePanel(props: Props) {
   const [messages, setMessages] = useState([]);
   const [newMessageText, setNewMessageText] = useState('');
   console.log('messages', messages);
+  console.log('TICKET DATA: ', ticketData);
 
   // query data about clicked-on ticket
 
@@ -76,6 +80,7 @@ export default function MessagePanel(props: Props) {
       console.log('data after creating message with responserId', thisData);
       getMessages();
       setNewMessageText('');
+      props.setOngoingTicket();
     },
     fetchPolicy: 'network-only',
   });
@@ -102,10 +107,33 @@ export default function MessagePanel(props: Props) {
 
         <div className="reply-container">
           <div className="reply-header">
-            <button onClick={handleMessageSendClick}>Send</button>
-            <button onClick={handleMessageSendClick}>Close ticket</button>
+            <button onClick={() => getMessages()} className="refresh-button">
+              <img
+                src="refresh-icon.jpg"
+                alt="Two arrows in form of a circle"
+              />
+            </button>
+            {data && data.ticket.status !== '3' && (
+              <button onClick={handleMessageSendClick} className="send-button">
+                Send
+              </button>
+            )}
+            {data && data.ticket.status !== '3' && (
+              <button
+                onClick={props.handleTicketCloseClick}
+                className="close-button"
+              >
+                Close ticket
+              </button>
+            )}
+            {data && data.ticket.status === '3' && (
+              <button onClick={props.setOngoingTicket} className="close-button">
+                Reopen ticket
+              </button>
+            )}
             <button
-              onClick={() => props.handleTicketDeleteClick(props.openedTicket)}
+              onClick={props.handleTicketDeleteClick}
+              className="delete-button"
             >
               Delete ticket
             </button>
@@ -113,6 +141,12 @@ export default function MessagePanel(props: Props) {
           <textarea
             onChange={(e) => setNewMessageText(e.currentTarget.value)}
             value={newMessageText}
+            disabled={data && data.ticket.status === '3' ? true : false}
+            placeholder={
+              data && data.ticket.status === '3'
+                ? 'This ticket is closed. You can reopen it.'
+                : 'Respond here'
+            }
           />
         </div>
       </div>

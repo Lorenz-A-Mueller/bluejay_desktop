@@ -1,6 +1,6 @@
-import { useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { getCustomerNumberQuery } from '../utils/queries';
+import { getCustomerNumberQuery, getStatusQuery } from '../utils/queries';
 import { tileStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
 import { TileProps } from '../utils/types';
@@ -19,24 +19,37 @@ export default function Tile(props: TileProps) {
     variables: { idInput: props.customerId },
     onCompleted: () => {
       setCustomerNumber(data.customer.number);
+      console.log('props.status', props.status);
+      getStatus();
     },
     // must be set so the query doesn't use the cache (could not be called several times)
     fetchPolicy: 'network-only',
     skip: !props.customerId,
   });
 
+  const [getStatus, { data: getStatusQueryData }] = useLazyQuery(
+    getStatusQuery,
+    {
+      variables: { statusID: props.status },
+      onCompleted: () => {
+        console.log('getStatusQueryData', getStatusQueryData);
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
+
   // get StatusBoxColor according to status and convert timestamps into readable date-times
 
   useEffect(() => {
     switch (props.status) {
-      case 'NEW':
+      case '1':
         setStatusBoxColor('#89FF89');
         break;
-      case 'CLOSED':
-        setStatusBoxColor('#FFC671');
-        break;
-      case 'ONGOING':
+      case '2':
         setStatusBoxColor('#FFF8B6');
+        break;
+      case '3':
+        setStatusBoxColor('#FFC671');
         break;
       default:
         setStatusBoxColor('#FFF8B6');
@@ -54,7 +67,7 @@ export default function Tile(props: TileProps) {
     >
       <div className="rectangular-box">
         <div className="status-box" style={{ backgroundColor: statusBoxColor }}>
-          <p>{props.status}</p>
+          <p>{getStatusQueryData && getStatusQueryData.status.status_name}</p>
         </div>
         <div className="title-box">
           <p>{props.title} (2) </p> {/* TODO: show Number of messages */}
