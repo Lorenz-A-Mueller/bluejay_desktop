@@ -39,3 +39,10 @@ export type HeaderProps = {
       }
     | undefined;
 };
+
+export type ChooseDateBarProps = {
+  handleChooseAllClick: () => void;
+};
+export type PieChartContainerProps = {
+  keyword: string;
+};

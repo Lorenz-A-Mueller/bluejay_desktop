@@ -143,6 +143,17 @@ export const layoutStyles = (screenHeight: number) => css`
       margin-right: ${scale[5]};
     }
   }
+  button {
+    height: ${(scale[14] * screenHeight) / 1024}px;
+    height: ${(scale[14] * screenHeight) / 1024}px;
+    margin-top: ${(scale[8] * screenHeight) / 1024}px;
+    margin-right: ${scale[5]};
+    background-color: transparent;
+
+    img {
+      height: 100%;
+    }
+  }
   .ticket-filter-box {
     display: flex;
     flex-direction: column;
@@ -151,16 +162,29 @@ export const layoutStyles = (screenHeight: number) => css`
     width: ${scale[16]}px;
     background-color: ${middleGray};
     margin-top: ${(scale[6] * screenHeight) / 1024}px;
+
     p {
       font-size: ${scale[8]};
       font-weight: bold;
       margin: ${(scale[9] * screenHeight) / 1024}px 0
         ${(scale[4] * screenHeight) / 1024}px 0;
     }
-    img {
+    button {
+      width: ${(scale[14] * screenHeight) / 1024}px;
+      height: ${(scale[14] * screenHeight) / 1024}px;
+      margin-top: ${(scale[6] * screenHeight) / 1024}px;
+      background-color: transparent;
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    > img {
       width: ${(scale[14] * screenHeight) / 1024}px;
       margin-top: ${(scale[6] * screenHeight) / 1024}px;
-      :nth-of-type(2) {
+      :nth-of-type(1) {
         width: ${(scale[15] * screenHeight) / 1024}px;
         margin-left: ${(scale[3] * screenHeight) / 1024}px;
       }
@@ -436,11 +460,15 @@ export const messagePanelStyles = css`
   right: 16px; // place for scroll-bar??
   top: ${scale[14]}px;
   width: ${scale[28]}px;
-  height: calc(100vh - ${scale[14]}px);
+  height: fit-content;
+  /* background-color: pink; */
+  z-index: 3;
   background-color: rgba(255, 255, 255, 90%);
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  padding-top: ${scale[6]}px;
 
   > button {
     position: absolute;
@@ -460,13 +488,15 @@ export const messagePanelStyles = css`
   }
 
   .blue-square {
+    position: relative;
     width: ${scale[27] + scale[15]}px;
-    height: ${scale[28] + scale[15]}px;
+    height: calc(100vh - 68px - 12px);
     background-color: ${blue};
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
+    padding-top: ${scale[8]}px;
 
     .title-bar {
       margin-top: ${scale[5]}px;
@@ -651,3 +681,297 @@ export const headerBarStyles = css`
     }
   }
 `;
+
+export const dataStyles = (screenWidth: number) => css`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  inset: 0 0 0 ${scale[18]}px;
+  width: calc(100vw - ${scale[18]}px);
+  height: 100vh;
+  background-color: ${lightGray};
+  .top-bar {
+    display: flex;
+    align-items: center;
+    background-color: black;
+    width: 100%;
+    min-width: ${scale[27]}px;
+    height: ${scale[14]}px;
+    > p {
+      margin-left: ${(scale[11] * screenWidth) / 1440}px;
+      font-size: ${scale[9]}px;
+      font-weight: bold;
+    }
+    button {
+      margin-left: ${(scale[7] * screenWidth) / 1440}px;
+      height: ${scale[10]}px;
+      background-color: transparent;
+      img {
+        height: 100%;
+      }
+    }
+  }
+  h1 {
+    font-size: ${scale[10]}px;
+    font-weight: bold;
+    margin-top: ${scale[11]}px;
+    margin-left: ${scale[11]}px;
+  }
+`;
+
+export const chooseDateBarStyles = css`
+  width: ${scale[27]}px;
+  height: ${scale[12]}px;
+  background-color: white;
+  margin-top: ${scale[9]}px;
+  margin-left: ${scale[11]}px;
+  border-radius: ${scale[5]}px;
+  display: flex;
+  align-items: center;
+  .choose-all-button {
+    width: ${scale[18]}px;
+    height: ${scale[10]}px;
+    border: solid black ${scale[1]}px;
+    font-size: ${scale[8]}px;
+    font-weight: bold;
+    background-color: white;
+    border-radius: ${scale[5]}px;
+    color: black;
+    margin-left: ${scale[8]}px;
+  }
+  .calendar-button {
+    width: ${scale[10]}px;
+    height: ${scale[10]}px;
+    background-color: white;
+    margin-left: ${scale[15]}px;
+
+    img {
+      width: 100%;
+    }
+  }
+  .date-display-button {
+    height: ${scale[10]}px;
+    width: ${scale[24]}px;
+    border: solid black ${scale[1]}px;
+    font-size: ${scale[9]}px;
+    font-weight: bold;
+    background-color: white;
+    color: black;
+    border-radius: ${scale[5]}px;
+    margin-left: ${scale[7]}px;
+  }
+`;
+
+export const ticketReportStyles = css`
+  background-color: white;
+  margin-left: ${scale[15]}px;
+  margin-top: ${scale[11]}px;
+  width: ${scale[30] - scale[13]}px;
+  height: ${scale[28] - scale[15]}px;
+  border-radius: ${scale[5]}px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  > div {
+    width: ${scale[29]}px;
+    background-color: ${lightGray};
+    margin-top: ${scale[11]}px;
+    border-radius: ${scale[5]}px;
+  }
+  .ticket-numbers-box {
+    height: ${scale[18]}px;
+    display: flex;
+    align-items: center;
+
+    > div {
+      width: ${scale[20]}px;
+      height: ${scale[16]}px;
+      border-right: solid black ${scale[1]}px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      &:nth-of-type(2) {
+        margin-left: auto;
+      }
+      &:last-of-type {
+        border: 0;
+      }
+      p {
+        font-size: ${scale[8]}px;
+        font-weight: bold;
+        &:nth-of-type(2) {
+          font-size: ${scale[12]}px;
+        }
+      }
+    }
+  }
+  .ticket-charts-box {
+    height: ${scale[21]}px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .ticket-timeline-box {
+    height: ${scale[21]}px;
+    display: flex;
+    flex-direction: column;
+    > p {
+      font-weight: bold;
+      font-size: ${scale[7]}px;
+      margin-top: ${scale[6]}px;
+      margin-left: ${(scale[29] - 3 * scale[23]) / 6}px;
+    }
+    .timeline-graph-box {
+      margin-left: ${(scale[29] - 3 * scale[23]) / 6}px;
+      width: ${scale[29] - (scale[29] - 3 * scale[23]) / 3}px;
+      height: ${scale[19]}px;
+      background: white;
+      background-size: contain;
+      border-radius: ${scale[5]}px;
+      margin-top: ${scale[6]}px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .scale-box {
+        height: ${scale[8] * 6}px;
+        width: ${scale[11]}px;
+        /* background-color: yellow; */
+        margin-right: auto;
+        margin-left: ${scale[10]}px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-start;
+        grid-gap: 2.7px;
+      }
+
+      .fake-line-container {
+        /* background-color: pink; */
+        position: absolute;
+        width: ${scale[28]}px;
+        overflow-x: scroll;
+
+        .fake-line {
+          height: ${scale[8]}px;
+          width: ${scale[29]}px;
+          border-bottom: solid ${lightGray} ${scale[2]}px;
+        }
+        .penultimate {
+          border-bottom: solid black ${scale[1]}px;
+        }
+        .last {
+          border-bottom: 0;
+        }
+        }
+        .column-container {
+          position: absolute;
+          bottom: ${scale[8]}px;
+          /* bottom: ${scale[8]}px; */
+          /* background-color: rgba(255, 0, 0, 0.5); */
+
+          height: ${scale[8] * 5}px;
+          width: ${scale[29]}px;
+          display: flex;
+          align-items: flex-end;
+          .column {
+            height: ${scale[8]}px;
+            width: ${scale[10]}px;
+            background-color: ${blue};
+            margin-right: ${scale[8]}px;
+          }
+        }
+        .date-container {
+          position: absolute;
+          bottom: 0;
+          height: ${scale[8]}px;
+          width: ${scale[29]}px;
+          /* background-color: yellow; */
+          display: flex;
+          align-items: flex-end;
+          .date {
+            width: ${scale[10]}px;
+            font-size: ${scale[6]}px;
+            font-weight: bold;
+            /* background-color: red; */
+            margin-right: ${scale[8]}px;
+            margin-bottom: 2px;
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const pieChartContainerStyles = css`
+  width: ${scale[23]}px;
+  height: ${scale[20]}px;
+  > p {
+    font-size: ${scale[7]}px;
+    font-weight: bold;
+  }
+  .pie-chart-and-legend-container {
+    width: ${scale[23]}px;
+    height: ${scale[19]}px;
+    background-color: white;
+    border-radius: ${scale[5]}px;
+    display: flex;
+    align-items: center;
+    margin-top: ${scale[5]}px;
+    .pie-chart-wrapper {
+      width: ${scale[18]}px;
+      margin-left: ${scale[6]}px;
+    }
+    .legend-wrapper {
+      display: flex;
+      flex-direction: column;
+      margin-left: ${scale[10]}px;
+      .legend-item-box {
+        display: flex;
+        align-items: center;
+        margin-top: ${scale[4]}px;
+        .legend-color-box {
+          width: ${scale[7]}px;
+          height: ${scale[7]}px;
+          background-color: black;
+        }
+        p {
+          font-size: ${scale[7]}px;
+          margin-left: ${scale[4]}px;
+        }
+      }
+    }
+  }
+`;
+/* const scale = {
+  1: 1,
+  2: 2,
+  3: 4,
+  4: 6,
+  5: 8,
+  6: 12,
+  7: 16,
+  8: 20,
+  9: 26,
+  10: 32,
+  11: 40,
+  12: 48,
+  13: 56,
+  14: 68,
+  15: 80,
+  16: 92,
+  17: 108,
+  18: 124,
+  19: 148,
+  20: 172,
+  21: 204,
+  22: 236,
+  23: 284,
+  24: 332,
+  25: 400,
+  26: 512,
+  27: 624,
+  28: 800,
+  29: 1024,
+  30: 1248,
+}; */
