@@ -64,9 +64,11 @@ export default function Data(props: DataProps) {
             <img src="logout-icon.png" alt="a stylized door with an arrow" />
           </button>
         </div>
-        <h1>Ticket Reports</h1>
-        <ChooseDateBar handleChooseAllClick={handleChooseAllClick} />
-        <TicketReport />
+        <div>
+          <h1>Ticket Reports</h1>
+          <ChooseDateBar handleChooseAllClick={handleChooseAllClick} />
+          <TicketReport />
+        </div>
       </main>
     </Layout>
   );

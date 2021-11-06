@@ -690,6 +690,8 @@ export const dataStyles = (screenWidth: number) => css`
   width: calc(100vw - ${scale[18]}px);
   height: 100vh;
   background-color: ${lightGray};
+  /* overflow-y: scroll; */
+
   .top-bar {
     display: flex;
     align-items: center;
@@ -697,6 +699,7 @@ export const dataStyles = (screenWidth: number) => css`
     width: 100%;
     min-width: ${scale[27]}px;
     height: ${scale[14]}px;
+    flex-shrink: 0;
     > p {
       margin-left: ${(scale[11] * screenWidth) / 1440}px;
       font-size: ${scale[9]}px;
@@ -711,11 +714,14 @@ export const dataStyles = (screenWidth: number) => css`
       }
     }
   }
-  h1 {
-    font-size: ${scale[10]}px;
-    font-weight: bold;
-    margin-top: ${scale[11]}px;
-    margin-left: ${scale[11]}px;
+  > div {
+    overflow-y: scroll;
+    h1 {
+      font-size: ${scale[10]}px;
+      font-weight: bold;
+      margin-top: ${scale[11]}px;
+      margin-left: ${scale[11]}px;
+    }
   }
 `;
 
@@ -832,24 +838,21 @@ export const ticketReportStyles = css`
       margin-top: ${scale[6]}px;
       display: flex;
       align-items: center;
-      justify-content: center;
       .scale-box {
         height: ${scale[8] * 6}px;
         width: ${scale[11]}px;
-        /* background-color: yellow; */
-        margin-right: auto;
-        margin-left: ${scale[10]}px;
+        margin-right: ${scale[6]}px;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         justify-content: flex-start;
+        padding-top: ${scale[5]}px;
         grid-gap: 2.7px;
       }
 
       .fake-line-container {
-        /* background-color: pink; */
-        position: absolute;
-        width: ${scale[28]}px;
+        position: relative;
+        width: ${scale[28] + scale[16]}px;
         overflow-x: scroll;
 
         .fake-line {
@@ -867,8 +870,6 @@ export const ticketReportStyles = css`
         .column-container {
           position: absolute;
           bottom: ${scale[8]}px;
-          /* bottom: ${scale[8]}px; */
-          /* background-color: rgba(255, 0, 0, 0.5); */
 
           height: ${scale[8] * 5}px;
           width: ${scale[29]}px;
