@@ -866,38 +866,37 @@ export const ticketReportStyles = css`
         .last {
           border-bottom: 0;
         }
-        }
-        .column-container {
-          position: absolute;
-          bottom: ${scale[8]}px;
+      }
+      .column-container {
+        position: absolute;
+        bottom: ${scale[8]}px;
 
-          height: ${scale[8] * 5}px;
-          width: ${scale[29]}px;
-          display: flex;
-          align-items: flex-end;
-          .column {
-            height: ${scale[8]}px;
-            width: ${scale[10]}px;
-            background-color: ${blue};
-            margin-right: ${scale[8]}px;
-          }
-        }
-        .date-container {
-          position: absolute;
-          bottom: 0;
+        height: ${scale[8] * 5}px;
+        width: ${scale[29]}px;
+        display: flex;
+        align-items: flex-end;
+        .column {
           height: ${scale[8]}px;
-          width: ${scale[29]}px;
-          /* background-color: yellow; */
-          display: flex;
-          align-items: flex-end;
-          .date {
-            width: ${scale[10]}px;
-            font-size: ${scale[6]}px;
-            font-weight: bold;
-            /* background-color: red; */
-            margin-right: ${scale[8]}px;
-            margin-bottom: 2px;
-          }
+          width: ${scale[10]}px;
+          background-color: ${blue};
+          margin-right: ${scale[8]}px;
+        }
+      }
+      .date-container {
+        position: absolute;
+        bottom: 0;
+        height: ${scale[8]}px;
+        width: ${scale[29]}px;
+        /* background-color: yellow; */
+        display: flex;
+        align-items: flex-end;
+        .date {
+          width: ${scale[10]}px;
+          font-size: ${scale[6]}px;
+          font-weight: bold;
+          /* background-color: red; */
+          margin-right: ${scale[8]}px;
+          margin-bottom: 2px;
         }
       }
     }

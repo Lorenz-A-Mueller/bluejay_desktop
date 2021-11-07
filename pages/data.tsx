@@ -6,6 +6,7 @@ import ChooseDateBar from '../components/ChooseDateBar';
 import Layout from '../components/Layout';
 import TicketReport from '../components/TicketReport';
 import Tile from '../components/Tile';
+import extractTicketReportData from '../utils/extractTicketReportData';
 import {
   deleteSessionMutation,
   employeeDataFetch,
@@ -14,7 +15,7 @@ import {
   getTicketInformationQuery,
 } from '../utils/queries';
 import { dataStyles } from '../utils/styles';
-import { Ticket } from '../utils/types';
+import { ReportData, Ticket } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 type DataProps = {
@@ -27,16 +28,29 @@ type DataProps = {
 export default function Data(props: DataProps) {
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
+  const [reportData, setReportData] = useState<ReportData | {}>({});
 
   const [getAllTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
     getAllTicketsQuery,
     {
       onCompleted: () => {
-        console.log(getAllTicketsQueryData);
+        console.log('getAllTicketsQueryData: ', getAllTicketsQueryData);
+        console.log(
+          'extractTicketReportData: ',
+          extractTicketReportData(getAllTicketsQueryData.tickets),
+        );
+
+        setReportData(extractTicketReportData(getAllTicketsQueryData.tickets));
       },
       fetchPolicy: 'network-only',
     },
   );
+
+  // All Tickets is default value, -> useEffect
+
+  useEffect(() => {
+    getAllTickets();
+  }, [getAllTickets]);
 
   const [logOut] = useMutation(deleteSessionMutation, {
     variables: { employee_id: props.employeeId },
@@ -67,7 +81,7 @@ export default function Data(props: DataProps) {
         <div>
           <h1>Ticket Reports</h1>
           <ChooseDateBar handleChooseAllClick={handleChooseAllClick} />
-          <TicketReport />
+          <TicketReport reportData={reportData} />
         </div>
       </main>
     </Layout>

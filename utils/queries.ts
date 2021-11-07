@@ -169,3 +169,39 @@ export const changeTicketStatusMutation = gql`
     }
   }
 `;
+
+export const getStatusesQuery = gql`
+  query {
+    statuses {
+      id
+      status_name
+    }
+  }
+`;
+
+export const getEmployeesQuery = gql`
+  query {
+    employees {
+      id
+      first_name
+    }
+  }
+`;
+
+export const getCategoriesQuery = gql`
+  query {
+    categories {
+      id
+      category_name
+    }
+  }
+`;
+
+export const getCategoryQuery = gql`
+  query ($categoryID: ID!) {
+    category(id: $categoryID) {
+      id
+      category_name
+    }
+  }
+`;

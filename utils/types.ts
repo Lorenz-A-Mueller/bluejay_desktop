@@ -45,4 +45,28 @@ export type ChooseDateBarProps = {
 };
 export type PieChartContainerProps = {
   keyword: string;
+  statusesData?: [Status];
+  employeesData?: [Employee];
+};
+
+export type TicketReportProps = {
+  reportData: ReportData;
+};
+
+export type ReportData = {
+  totalTickets: number;
+  assignedTickets: number;
+  unassignedTickets: number;
+  closedTickets: number;
+  pendingTickets: number;
+};
+
+export type Status = {
+  id: string;
+  status_name: string;
+};
+
+export type Employee = {
+  id: string;
+  first_name: string;
 };

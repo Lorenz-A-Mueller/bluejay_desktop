@@ -3,11 +3,24 @@ import { useEffect, useState } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { getStatusQuery } from '../utils/queries';
 import { pieChartContainerStyles } from '../utils/styles';
-import { PieChartContainerProps } from '../utils/types';
+import { Employee, PieChartContainerProps, Status } from '../utils/types';
 
 const myValue = 70;
 
 export default function PieChartContainer(props: PieChartContainerProps) {
+  useEffect(() => {
+    if (props.statusesData) {
+      setSectorTitles(props.statusesData);
+    } else if (props.employeesData) {
+      setSectorTitles(props.employeesData);
+    }
+  }, [props.statusesData, props.employeesData]);
+
+  const [sectorTitles, setSectorTitles] = useState<[Status] | [Employee] | []>(
+    [],
+  );
+
+  console.log('sectorTitles: ', sectorTitles);
   return (
     <div css={pieChartContainerStyles}>
       <p>By {props.keyword}</p>
@@ -22,26 +35,21 @@ export default function PieChartContainer(props: PieChartContainerProps) {
           />
         </div>
         <div className="legend-wrapper">
-          <div className="legend-item-box">
-            <div className="legend-color-box" />
-            <p>Complaint</p>
-          </div>
-          <div className="legend-item-box">
-            <div className="legend-color-box" />
-            <p>Complaint</p>
-          </div>
-          <div className="legend-item-box">
-            <div className="legend-color-box" />
-            <p>Complaint</p>
-          </div>
-          <div className="legend-item-box">
-            <div className="legend-color-box" />
-            <p>Complaint</p>
-          </div>
-          <div className="legend-item-box">
-            <div className="legend-color-box" />
-            <p>Complaint</p>
-          </div>
+          {sectorTitles.map((element) => {
+            return (
+              <div
+                className="legend-item-box"
+                key={`pieChart-legend-element -${element.id}`}
+              >
+                <div className="legend-color-box" />
+                <p>
+                  {'status_name' in element
+                    ? element.status_name
+                    : element.first_name}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

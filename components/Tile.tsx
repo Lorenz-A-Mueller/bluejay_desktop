@@ -1,6 +1,10 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { getCustomerNumberQuery, getStatusQuery } from '../utils/queries';
+import {
+  getCategoryQuery,
+  getCustomerNumberQuery,
+  getStatusQuery,
+} from '../utils/queries';
 import { tileStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
 import { TileProps } from '../utils/types';
@@ -38,6 +42,17 @@ export default function Tile(props: TileProps) {
     },
   );
 
+  const [getCategory, { data: getCategoryQueryData }] = useLazyQuery(
+    getCategoryQuery,
+    {
+      variables: { categoryID: props.category },
+      onCompleted: () => {
+        console.log('getCategoryQueryData', getCategoryQueryData);
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
+
   // get StatusBoxColor according to status and convert timestamps into readable date-times
 
   useEffect(() => {
@@ -56,7 +71,8 @@ export default function Tile(props: TileProps) {
     }
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
-  }, [props.status, props.created, props.lastResponse]);
+    getCategory();
+  }, [props.status, props.created, props.lastResponse, getCategory]);
 
   const screenWidth = useWindowDimensions().width;
 
@@ -88,7 +104,10 @@ export default function Tile(props: TileProps) {
         </div>
         <div className="category-box">
           <p>category</p>
-          <p>{props.category}</p>
+          <p>
+            {getCategoryQueryData &&
+              getCategoryQueryData.category.category_name}
+          </p>
         </div>
         <div className="priority-box">
           <p>priority</p>
