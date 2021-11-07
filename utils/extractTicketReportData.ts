@@ -1,6 +1,80 @@
 import { Ticket } from './types';
 
-export default function extractTicketReportData(tickets: Ticket[]) {
+export default async function extractTicketReportData(tickets: Ticket[]) {
+  const apiUrl = 'http://localhost:4000/graphql';
+
+  // query statuses in order to get number of available statuses
+
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `query {
+          statuses {
+            id
+          }
+        }`,
+    }),
+  });
+  const data = await res.json();
+  const statusesLength = data.data.statuses.length;
+
+  const byStatusArray = new Array(statusesLength).fill(0);
+  tickets.forEach((ticket) => {
+    byStatusArray[Number(ticket.status) - 1] += 1;
+  });
+
+  // query categories in order to get number of available categories
+
+  const res2 = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `query {
+          categories {
+            id
+          }
+        }`,
+    }),
+  });
+  const data2 = await res2.json();
+  const categoriesLength = data2.data.categories.length;
+
+  const byCategoryArray = new Array(categoriesLength).fill(0);
+  tickets.forEach((ticket) => {
+    byCategoryArray[Number(ticket.category) - 1] += 1;
+  });
+
+  // query employees in order to get number of available assignees
+
+  const res3 = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `query {
+            employees {
+              id
+            }
+          }`,
+    }),
+  });
+  const data3 = await res3.json();
+  const employeesLength = data3.data.employees.length;
+
+  const byAssigneeArray = new Array(employeesLength).fill(0);
+  tickets.forEach((ticket) => {
+    if (ticket.assignee_id) {
+      // exclude null values
+      byAssigneeArray[Number(ticket.assignee_id) - 1] += 1;
+    }
+  });
+
+  console.log('byStatusArray: ', byStatusArray);
+  console.log('byCategory: ', byCategoryArray);
+  console.log('byAssigneeArray: ', byAssigneeArray);
+
+  //
+
   const assignedTicketArray = tickets.filter((ticket) => {
     return ticket.assignee_id;
   });
@@ -14,5 +88,8 @@ export default function extractTicketReportData(tickets: Ticket[]) {
     unassignedTickets: tickets.length - assignedTicketArray.length || 0,
     closedTickets: closedTicketArray.length || 0,
     pendingTickets: tickets.length - closedTicketArray.length || 0,
+    byStatus: byStatusArray,
+    byCategory: byCategoryArray,
+    byAssignee: byAssigneeArray,
   };
 }

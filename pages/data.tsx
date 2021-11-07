@@ -33,14 +33,16 @@ export default function Data(props: DataProps) {
   const [getAllTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
     getAllTicketsQuery,
     {
-      onCompleted: () => {
+      onCompleted: async () => {
         console.log('getAllTicketsQueryData: ', getAllTicketsQueryData);
         console.log(
           'extractTicketReportData: ',
           extractTicketReportData(getAllTicketsQueryData.tickets),
         );
 
-        setReportData(extractTicketReportData(getAllTicketsQueryData.tickets));
+        setReportData(
+          await extractTicketReportData(getAllTicketsQueryData.tickets),
+        );
       },
       fetchPolicy: 'network-only',
     },

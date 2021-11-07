@@ -2,14 +2,30 @@ import { useLazyQuery } from '@apollo/client';
 import { report } from 'process';
 import { useEffect, useState } from 'react';
 import extractTicketReportData from '../utils/extractTicketReportData';
-import { getEmployeesQuery, getStatusesQuery } from '../utils/queries';
+import {
+  getCategoriesQuery,
+  getEmployeesQuery,
+  getStatusesQuery,
+} from '../utils/queries';
 import { ticketReportStyles } from '../utils/styles';
-import { Employee, Status, TicketReportProps } from '../utils/types';
+import { Category, Employee, Status, TicketReportProps } from '../utils/types';
 import PieChartContainer from './PieChartContainer';
 
 export default function TicketReport(props: TicketReportProps) {
   const [statusesData, setStatusesData] = useState<Status[]>([]);
   const [employeesData, setEmployeesData] = useState<Employee[]>([]);
+  const [categoriesData, setCategoriesData] = useState<Category[]>([]);
+
+  const [getCategories, { data: getCategoriesQueryData }] = useLazyQuery(
+    getCategoriesQuery,
+    {
+      onCompleted: () => {
+        console.log('getCategoriesQueryData: ', getCategoriesQueryData);
+        setCategoriesData(getCategoriesQueryData.categories);
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const [getStatuses, { data: getStatusesQueryData }] = useLazyQuery(
     getStatusesQuery,
@@ -35,36 +51,64 @@ export default function TicketReport(props: TicketReportProps) {
   useEffect(() => {
     getStatuses();
     getEmployees();
-  }, [getStatuses, getEmployees]);
+    getCategories();
+  }, [getStatuses, getEmployees, getCategories]);
 
   return (
     <div css={ticketReportStyles}>
       <div className="ticket-numbers-box">
         <div>
           <p>Total Tickets</p>
-          <p>{props.reportData.totalTickets}</p>
+          <p>
+            {'totalTickets' in props.reportData &&
+              props.reportData.totalTickets}
+          </p>
         </div>
         <div>
           <p>Assigned</p>
-          <p>{props.reportData.assignedTickets}</p>
+          <p>
+            {'assignedTickets' in props.reportData &&
+              props.reportData.assignedTickets}
+          </p>
         </div>
         <div>
           <p>Not assigned</p>
-          <p>{props.reportData.unassignedTickets}</p>
+          <p>
+            {'unassignedTickets' in props.reportData &&
+              props.reportData.unassignedTickets}
+          </p>
         </div>
         <div>
           <p>Closed</p>
-          <p>{props.reportData.closedTickets}</p>
+          <p>
+            {'closedTickets' in props.reportData &&
+              props.reportData.closedTickets}
+          </p>
         </div>
         <div>
           <p>Pending</p>
-          <p>{props.reportData.pendingTickets}</p>
+          <p>
+            {'pendingTickets' in props.reportData &&
+              props.reportData.pendingTickets}
+          </p>
         </div>
       </div>
       <div className="ticket-charts-box">
-        <PieChartContainer keyword="Category" />
-        <PieChartContainer keyword="Status" statusesData={statusesData} />
-        <PieChartContainer keyword="Assignee" employeesData={employeesData} />
+        <PieChartContainer
+          keyword="Category"
+          categoriesData={categoriesData}
+          reportData={props.reportData}
+        />
+        <PieChartContainer
+          keyword="Status"
+          statusesData={statusesData}
+          reportData={props.reportData}
+        />
+        <PieChartContainer
+          keyword="Assignee"
+          employeesData={employeesData}
+          reportData={props.reportData}
+        />
       </div>
       <div className="ticket-timeline-box">
         <p>Timeline / New tickets per day</p>

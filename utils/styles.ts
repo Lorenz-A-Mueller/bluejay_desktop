@@ -918,6 +918,7 @@ export const pieChartContainerStyles = css`
     display: flex;
     align-items: center;
     margin-top: ${scale[5]}px;
+    background-color: creme;
     .pie-chart-wrapper {
       width: ${scale[18]}px;
       margin-left: ${scale[6]}px;
@@ -934,6 +935,7 @@ export const pieChartContainerStyles = css`
           width: ${scale[7]}px;
           height: ${scale[7]}px;
           background-color: black;
+          border: solid ${middleGray} 1px;
         }
         p {
           font-size: ${scale[7]}px;
