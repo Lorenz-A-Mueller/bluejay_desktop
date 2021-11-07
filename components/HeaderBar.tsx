@@ -1,12 +1,35 @@
 import { useLazyQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { getStatusQuery } from '../utils/queries';
+import { getCategoryQuery, getStatusQuery } from '../utils/queries';
 import { headerBarStyles } from '../utils/styles';
 import { HeaderProps } from '../utils/types';
 
 export default function HeaderBar(props: HeaderProps) {
   const [statusBoxColor, setStatusBoxColor] = useState('#FFF8B6');
   console.log('props.ticket', props.ticket);
+
+  const [getStatus, { data: getStatusQueryData }] = useLazyQuery(
+    getStatusQuery,
+    {
+      variables: { statusID: props.ticket?.status },
+      onCompleted: () => {
+        console.log('getStatusQueryData', getStatusQueryData);
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  const [getCategory, { data: getCategoryQueryData }] = useLazyQuery(
+    getCategoryQuery,
+    {
+      variables: { categoryID: props.ticket?.category },
+      onCompleted: () => {
+        console.log('getCategoryQueryData', getCategoryQueryData);
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
+
   useEffect(() => {
     if (props.ticket) {
       switch (props.ticket.status) {
@@ -23,19 +46,9 @@ export default function HeaderBar(props: HeaderProps) {
           setStatusBoxColor('#FFF8B6');
       }
       getStatus();
+      getCategory();
     }
-  }, [props.ticket]);
-
-  const [getStatus, { data: getStatusQueryData }] = useLazyQuery(
-    getStatusQuery,
-    {
-      variables: { statusID: props.ticket?.status },
-      onCompleted: () => {
-        console.log('getStatusQueryData', getStatusQueryData);
-      },
-      fetchPolicy: 'network-only',
-    },
-  );
+  }, [props.ticket, getStatus, getCategory]);
 
   return (
     <div css={headerBarStyles}>
@@ -56,7 +69,9 @@ export default function HeaderBar(props: HeaderProps) {
       </div>
       <div className="category-square">
         <p>category</p>
-        <p>{props.ticket && props.ticket.category}</p>
+        <p>
+          {getCategoryQueryData && getCategoryQueryData.category.category_name}
+        </p>
       </div>
       <div className="assigned-square">
         <p>assigned</p>
