@@ -42,6 +42,8 @@ export type MessagePanelHeaderProps = {
 
 export type ChooseDateBarProps = {
   handleChooseAllClick: () => void;
+  handleCustomDates: (arg0: number, arg1: number) => void;
+  reportData: ReportData;
 };
 export type PieChartContainerProps = {
   keyword: string;
@@ -53,6 +55,7 @@ export type PieChartContainerProps = {
 
 export type TicketReportProps = {
   reportData: ReportData;
+  customDates: number[];
 };
 
 export type ReportData =

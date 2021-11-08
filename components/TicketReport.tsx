@@ -15,6 +15,8 @@ export default function TicketReport(props: TicketReportProps) {
   const [employeesData, setEmployeesData] = useState<Employee[]>([]);
   const [categoriesData, setCategoriesData] = useState<Category[]>([]);
 
+  console.log('props.customDates: ', props.customDates);
+
   const [getCategories, { data: getCategoriesQueryData }] = useLazyQuery(
     getCategoriesQuery,
     {

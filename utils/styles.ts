@@ -762,16 +762,75 @@ export const chooseDateBarStyles = css`
       width: 100%;
     }
   }
-  .date-display-button {
-    height: ${scale[10]}px;
+  .date-container {
+    position: relative;
     width: ${scale[24]}px;
-    border: solid black ${scale[1]}px;
-    font-size: ${scale[9]}px;
-    font-weight: bold;
-    background-color: white;
-    color: black;
-    border-radius: ${scale[5]}px;
-    margin-left: ${scale[7]}px;
+    z-index: 1;
+    .date-display-button {
+      height: ${scale[10]}px;
+      width: 100%;
+      border: solid black ${scale[1]}px;
+      font-size: ${scale[8]}px;
+      font-weight: bold;
+      background-color: white;
+      color: black;
+      border-radius: ${scale[5]}px;
+      margin-left: ${scale[7]}px;
+    }
+    .calendar-container {
+      width: 100%;
+      border: solid black 1px;
+      position: absolute;
+      left: ${scale[7]}px;
+
+      /// --react-calendar styling
+
+      .react-calendar {
+        width: 100%;
+        background-color: ${orange};
+        text-align: center;
+        .react-calendar__navigation {
+          .react-calendar__navigation__arrow {
+            font-size: ${scale[9]}px;
+            background-color: transparent;
+            color: black;
+            margin: 0 ${scale[2]}px;
+          }
+          .react-calendar__navigation__label {
+            font-size: ${scale[8]}px;
+            text-align: center;
+            background-color: ${orange};
+            color: black;
+            font-weight: bold;
+          }
+        }
+        .react-calendar__tile {
+          height: ${scale[13]}px;
+          color: black;
+          background: white;
+        }
+        .react-calendar__month-view__weekdays__weekday {
+          font-size: ${scale[7]}px;
+          color: black;
+          margin-top: ${scale[5]}px;
+          font-weight: bold;
+        }
+        .react-calendar__tile--active {
+          background: ${blue};
+          color: black;
+        }
+        .react-calendar__tile--active:enabled:hover,
+        .react-calendar__tile--active:enabled:focus {
+          background: ${blue};
+        }
+        .react-calendar__tile,
+        .react-calendar__month-view__days__day {
+          font-size: ${scale[8]}px;
+          text-decoration: none;
+        }
+      }
+      /// -------
+    }
   }
 `;
 

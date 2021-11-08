@@ -69,6 +69,23 @@ export const getAllTicketsQuery = gql`
   }
 `;
 
+export const getTicketsInTimeFrameQuery = gql`
+  query ($intervalStart: String!, $intervalEnd: String!) {
+    ticketsByTimeFrame(startTime: $intervalStart, endTime: $intervalEnd) {
+      id
+      ticket_number
+      status
+      last_response
+      customer_id
+      category
+      priority
+      created
+      assignee_id
+      title
+    }
+  }
+`;
+
 export const deleteSessionMutation = gql`
   mutation ($employee_id: ID!) {
     deleteEmployeeSession(employee_id: $employee_id) {
