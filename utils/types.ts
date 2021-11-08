@@ -4,7 +4,6 @@ export type Ticket = {
   ticket_number: string;
   status: string;
   last_response: string;
-  messages: [number];
   priority: string;
   title: string;
   customer_id: string;
@@ -28,7 +27,7 @@ export type TileProps = {
   filter: string;
 };
 
-export type HeaderProps = {
+export type MessagePanelHeaderProps = {
   ticket:
     | {
         status: string;
@@ -87,18 +86,19 @@ export type Category = {
   category_name: string;
 };
 
-export type LayoutProps = {
+export type SideBarProps = {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   filter: string;
+  children: React.ReactNode;
 };
 
-export type AllTicketsProps = {
+export type TicketsProps = {
   employee: {
     first_name: string;
   };
   employeeId: string;
   filter: string;
-  setFilter: (arg0: string) => void;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export type DataProps = {
@@ -107,5 +107,36 @@ export type DataProps = {
   };
   employeeId: string;
   filter: string;
-  setFilter: (arg0: string) => void;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export type MessagePanelProps = {
+  openedTicket: string;
+  employee: {
+    first_name: string;
+  };
+  employeeId: string | undefined;
+  setShowMessagePanel: (arg: boolean) => void;
+  closeTicket: () => void;
+  deleteTicket: () => void;
+  setOngoingTicket: () => void;
+};
+
+export type Message = {
+  id: string;
+  content: string;
+  created: string;
+  responder_id: string | undefined;
+};
+
+export type MessageFieldProps = {
+  message: Message | undefined;
+  ticketData:
+    | {
+        customer_id?: string;
+      }
+    | undefined;
+  employee: {
+    first_name: string;
+  };
 };

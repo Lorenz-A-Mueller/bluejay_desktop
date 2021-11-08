@@ -1,20 +1,14 @@
 import { useRouter } from 'next/dist/client/router';
-import { useState } from 'react';
-import { layoutStyles } from '../utils/styles';
-import { LayoutProps } from '../utils/types';
+import { sideBarStyles } from '../utils/styles';
+import { SideBarProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
-export default function Layout(props: LayoutProps) {
+export default function SideBar(props: SideBarProps) {
   const route = useRouter();
 
   return (
     <>
-      <div
-        css={layoutStyles(
-          useWindowDimensions().height,
-          useWindowDimensions().width,
-        )}
-      >
+      <div css={sideBarStyles(useWindowDimensions().height!)}>
         <div className="circle">
           <img src="icon.png" alt="BlueJay logo" />
         </div>
@@ -24,7 +18,7 @@ export default function Layout(props: LayoutProps) {
           <button
             onClick={() => {
               props.setFilter('');
-              route.push('/allTickets');
+              route.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === ''
@@ -45,7 +39,7 @@ export default function Layout(props: LayoutProps) {
               props.setFilter((previous) => {
                 return previous === 'NEW' ? '' : 'NEW';
               });
-              route.push('/allTickets');
+              route.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === 'NEW'
@@ -70,7 +64,7 @@ export default function Layout(props: LayoutProps) {
               props.setFilter((previous) => {
                 return previous === 'unassigned' ? '' : 'unassigned';
               });
-              route.push('/allTickets');
+              route.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === 'unassigned'
@@ -87,7 +81,7 @@ export default function Layout(props: LayoutProps) {
           >
             <img
               src="email-unassigned-icon.png"
-              alt="an open letter with an @ symbol"
+              alt="an open letter with an @-symbol"
             />
           </button>
           <button
@@ -95,7 +89,7 @@ export default function Layout(props: LayoutProps) {
               props.setFilter((previous) => {
                 return previous === 'CLOSED' ? '' : 'CLOSED';
               });
-              route.push('/allTickets');
+              route.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === 'CLOSED'
@@ -103,7 +97,6 @@ export default function Layout(props: LayoutProps) {
                     marginLeft: '68px',
                     borderRadius: '8px',
                     backgroundColor: '#C4C4C4',
-
                     padding: '4px 8px 4px 0',
                     boxSizing: 'content-box',
                     marginTop: '44px',

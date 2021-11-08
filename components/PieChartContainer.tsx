@@ -1,7 +1,5 @@
-import { useLazyQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { getStatusQuery } from '../utils/queries';
 import { pieChartContainerStyles } from '../utils/styles';
 import {
   Category,
@@ -9,8 +7,6 @@ import {
   PieChartContainerProps,
   Status,
 } from '../utils/types';
-
-const myValue = 70;
 
 const colors = [
   '#ff0000',
@@ -29,8 +25,6 @@ export default function PieChartContainer(props: PieChartContainerProps) {
   useEffect(() => {
     if (props.statusesData && 'byStatus' in props.reportData) {
       setSectorTitles(props.statusesData);
-      console.log('PROPS.REPORTDATA: ', props.reportData);
-      console.log('PROPS.REPORTDATA.byStatus: ', props.reportData.byStatus);
       setSectorNumber(props.reportData.byStatus.length);
     } else if (props.employeesData && 'byAssignee' in props.reportData) {
       setSectorTitles(props.employeesData);
@@ -46,10 +40,6 @@ export default function PieChartContainer(props: PieChartContainerProps) {
     props.reportData,
   ]);
 
-  console.log('SECTOR NUMBER: ', sectorNumber);
-
-  console.log('sectorTitles: ', sectorTitles);
-
   //
 
   const statusPieChartArray = [];
@@ -57,7 +47,7 @@ export default function PieChartContainer(props: PieChartContainerProps) {
   for (let i = 0; i < sectorNumber; i++) {
     statusPieChartArray.push({
       title: i,
-      value: 'byStatus' in props.reportData && props.reportData.byStatus[i],
+      value: 'byStatus' in props.reportData ? props.reportData.byStatus[i] : 0,
       color: colors[i],
     });
   }
@@ -67,7 +57,8 @@ export default function PieChartContainer(props: PieChartContainerProps) {
   for (let i = 0; i < sectorNumber; i++) {
     categoryPieChartArray.push({
       title: i,
-      value: 'byCategory' in props.reportData && props.reportData.byCategory[i],
+      value:
+        'byCategory' in props.reportData ? props.reportData.byCategory[i] : 0,
       color: colors[i],
     });
   }
@@ -77,7 +68,8 @@ export default function PieChartContainer(props: PieChartContainerProps) {
   for (let i = 0; i < sectorNumber; i++) {
     assigneePieChartArray.push({
       title: i,
-      value: 'byAssignee' in props.reportData && props.reportData.byAssignee[i],
+      value:
+        'byAssignee' in props.reportData ? props.reportData.byAssignee[i] : 0,
       color: colors[i],
     });
   }
@@ -95,12 +87,6 @@ export default function PieChartContainer(props: PieChartContainerProps) {
           {'employeesData' in props && (
             <PieChart data={assigneePieChartArray} />
           )}
-          {/* data={[
-              { title: 'One', value: myValue, color: '#E38627' },
-              { title: 'Two', value: 15, color: '#C13C37' },
-              { title: 'Three', value: 20, color: '#6A2135' },
-            ]}
-          />  */}
         </div>
         <div className="legend-wrapper">
           {sectorTitles.map((element, index) => {

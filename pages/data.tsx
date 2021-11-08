@@ -3,19 +3,17 @@ import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
 import ChooseDateBar from '../components/ChooseDateBar';
-import Layout from '../components/Layout';
+import SideBar from '../components/SideBar';
 import TicketReport from '../components/TicketReport';
-import Tile from '../components/Tile';
 import extractTicketReportData from '../utils/extractTicketReportData';
 import {
   deleteSessionMutation,
   employeeDataFetch,
   employeeSessionFetch,
   getAllTicketsQuery,
-  getTicketInformationQuery,
 } from '../utils/queries';
 import { dataStyles } from '../utils/styles';
-import { DataProps, ReportData, Ticket } from '../utils/types';
+import { DataProps, ReportData } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 export default function Data(props: DataProps) {
@@ -27,12 +25,6 @@ export default function Data(props: DataProps) {
     getAllTicketsQuery,
     {
       onCompleted: async () => {
-        console.log('getAllTicketsQueryData: ', getAllTicketsQueryData);
-        console.log(
-          'extractTicketReportData: ',
-          extractTicketReportData(getAllTicketsQueryData.tickets),
-        );
-
         setReportData(
           await extractTicketReportData(getAllTicketsQueryData.tickets),
         );
@@ -49,37 +41,28 @@ export default function Data(props: DataProps) {
 
   const [logOut] = useMutation(deleteSessionMutation, {
     variables: { employee_id: props.employeeId },
-    onCompleted: (deletedData) => {
-      console.log(deletedData);
+    onCompleted: () => {
       router.push('/');
     },
     fetchPolicy: 'network-only',
   });
 
-  const handleLogOutClick = () => {
-    logOut();
-  };
-
-  const handleChooseAllClick = () => {
-    getAllTickets();
-  };
-
   return (
-    <Layout setFilter={props.setFilter} filter={props.filter}>
+    <SideBar setFilter={props.setFilter} filter={props.filter}>
       <main css={screenWidth && dataStyles(screenWidth)}>
         <div className="top-bar">
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
-          <button onClick={handleLogOutClick}>
+          <button onClick={() => logOut()}>
             <img src="logout-icon.png" alt="a stylized door with an arrow" />
           </button>
         </div>
         <div>
           <h1>Ticket Reports</h1>
-          <ChooseDateBar handleChooseAllClick={handleChooseAllClick} />
+          <ChooseDateBar handleChooseAllClick={() => getAllTickets()} />
           <TicketReport reportData={reportData} />
         </div>
       </main>
-    </Layout>
+    </SideBar>
   );
 }
 
@@ -98,11 +81,10 @@ export const getServerSideProps = async (
       },
     };
   }
-  console.log('data.data.employeeSession', data.data.employeeSession);
+
   const employeeId = data.data.employeeSession.employee_id;
   const res2 = await employeeDataFetch(employeeId, apiUrl);
   const data2 = await res2.json();
-  console.log('data2', data2);
 
   return {
     props: {

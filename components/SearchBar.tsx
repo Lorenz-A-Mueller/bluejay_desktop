@@ -4,6 +4,9 @@ import useWindowDimensions from '../utils/useWindowDimensions';
 export default function SearchBar() {
   const screenWidth = useWindowDimensions().width;
   return (
-    <input css={searchBarStyles(screenWidth)} placeholder="Search Tickets..." />
+    <input
+      css={searchBarStyles(screenWidth!)}
+      placeholder="Search Tickets..."
+    />
   );
 }

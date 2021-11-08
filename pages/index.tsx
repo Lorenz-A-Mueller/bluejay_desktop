@@ -27,7 +27,7 @@ export default function Home() {
       const destination =
         typeof router.query.returnTo === 'string' && router.query.returnTo
           ? router.query.returnTo
-          : `/allTickets`;
+          : `/tickets`;
 
       router.push(destination);
     },

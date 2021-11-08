@@ -1,6 +1,5 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { calculateNumberOfDays } from '../utils/calculateNumberOfDays';
 import {
   getCategoryQuery,
   getCustomerNumberQuery,
@@ -25,8 +24,6 @@ export default function Tile(props: TileProps) {
     variables: { idInput: props.customerId },
     onCompleted: () => {
       setCustomerNumber(data.customer.number);
-      console.log('props.status', props.status);
-
       getStatus();
     },
     // must be set so the query doesn't use the cache (could not be called several times)
@@ -39,7 +36,6 @@ export default function Tile(props: TileProps) {
     {
       variables: { statusID: props.status },
       onCompleted: () => {
-        console.log('getStatusQueryData', getStatusQueryData);
         setStatusName(getStatusQueryData.status.status_name);
       },
       fetchPolicy: 'network-only',
@@ -50,9 +46,7 @@ export default function Tile(props: TileProps) {
     getCategoryQuery,
     {
       variables: { categoryID: props.category },
-      onCompleted: () => {
-        console.log('getCategoryQueryData', getCategoryQueryData);
-      },
+      onCompleted: () => {},
       fetchPolicy: 'network-only',
     },
   );
@@ -75,11 +69,6 @@ export default function Tile(props: TileProps) {
     }
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
-
-    console.log(
-      'days since ticket creation: ',
-      calculateNumberOfDays(Number(props.created)),
-    );
     getCategory();
   }, [props.status, props.created, props.lastResponse, getCategory]);
 

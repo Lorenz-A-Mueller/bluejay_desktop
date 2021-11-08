@@ -122,7 +122,7 @@ export const indexStyles = css`
   }
 `;
 
-export const layoutStyles = (screenHeight: number) => css`
+export const sideBarStyles = (screenHeight: number) => css`
   width: ${scale[18]}px;
   background-color: ${darkGray};
   height: 100vh;
@@ -206,7 +206,7 @@ export const layoutStyles = (screenHeight: number) => css`
   }
 `;
 
-export const allTicketsStyles = (screenWidth: number) => css`
+export const ticketsStyles = (screenWidth: number) => css`
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -609,7 +609,7 @@ export const messageFieldStyles = css`
   }
 `;
 
-export const headerBarStyles = css`
+export const messagePanelHeaderStyles = css`
   width: ${scale[27]}px;
   height: ${scale[15]}px;
   background-color: ${middleGray};

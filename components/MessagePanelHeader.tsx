@@ -1,20 +1,17 @@
 import { useLazyQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { getCategoryQuery, getStatusQuery } from '../utils/queries';
-import { headerBarStyles } from '../utils/styles';
-import { HeaderProps } from '../utils/types';
+import { messagePanelHeaderStyles } from '../utils/styles';
+import { MessagePanelHeaderProps } from '../utils/types';
 
-export default function HeaderBar(props: HeaderProps) {
+export default function MessagePanelHeader(props: MessagePanelHeaderProps) {
   const [statusBoxColor, setStatusBoxColor] = useState('#FFF8B6');
-  console.log('props.ticket', props.ticket);
 
   const [getStatus, { data: getStatusQueryData }] = useLazyQuery(
     getStatusQuery,
     {
       variables: { statusID: props.ticket?.status },
-      onCompleted: () => {
-        console.log('getStatusQueryData', getStatusQueryData);
-      },
+      onCompleted: () => {},
       fetchPolicy: 'network-only',
     },
   );
@@ -23,9 +20,7 @@ export default function HeaderBar(props: HeaderProps) {
     getCategoryQuery,
     {
       variables: { categoryID: props.ticket?.category },
-      onCompleted: () => {
-        console.log('getCategoryQueryData', getCategoryQueryData);
-      },
+      onCompleted: () => {},
       fetchPolicy: 'network-only',
     },
   );
@@ -51,7 +46,7 @@ export default function HeaderBar(props: HeaderProps) {
   }, [props.ticket, getStatus, getCategory]);
 
   return (
-    <div css={headerBarStyles}>
+    <div css={messagePanelHeaderStyles}>
       <div
         style={{ backgroundColor: statusBoxColor }}
         className="status-square"
@@ -79,7 +74,7 @@ export default function HeaderBar(props: HeaderProps) {
           {props.ticket &&
             (props.ticket.assignee_id
               ? props.ticket.assignee_id
-              : 'not assigned')}{' '}
+              : 'not assigned')}
         </p>
       </div>
     </div>

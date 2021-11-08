@@ -1,6 +1,3 @@
-import { useLazyQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
-import { getStatusQuery } from '../utils/queries';
 import { chooseDateBarStyles } from '../utils/styles';
 import { ChooseDateBarProps } from '../utils/types';
 

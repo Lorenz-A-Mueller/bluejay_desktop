@@ -2,10 +2,10 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
-import Layout from '../components/Layout';
 import MessagePanel from '../components/MessagePanel';
 import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
+import Sidebar from '../components/SideBar';
 import Tile from '../components/Tile';
 import {
   changeTicketStatusMutation,
@@ -14,20 +14,17 @@ import {
   employeeDataFetch,
   employeeSessionFetch,
   getAllTicketsQuery,
-  getTicketInformationQuery,
 } from '../utils/queries';
-import { allTicketsStyles } from '../utils/styles';
-import { AllTicketsProps, Ticket } from '../utils/types';
+import { ticketsStyles } from '../utils/styles';
+import { Ticket, TicketsProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
-export default function AllTickets(props: AllTicketsProps) {
+export default function Tickets(props: TicketsProps) {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
 
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
-
-  console.log('OPENED TICKET', openedTicket);
 
   const [getTickets, { data }] = useLazyQuery(getAllTicketsQuery, {
     fetchPolicy: 'network-only',
@@ -39,8 +36,7 @@ export default function AllTickets(props: AllTicketsProps) {
 
   const [logOut] = useMutation(deleteSessionMutation, {
     variables: { employee_id: props.employeeId },
-    onCompleted: (deletedData) => {
-      console.log(deletedData);
+    onCompleted: () => {
       router.push('/');
     },
     fetchPolicy: 'network-only',
@@ -89,21 +85,9 @@ export default function AllTickets(props: AllTicketsProps) {
     setOpenedTicket(ticketId);
   };
 
-  const handleLogOutClick = () => {
-    logOut();
-  };
-
-  const handleTicketDeleteClick = () => {
-    deleteTicket();
-  };
-
-  const handleTicketCloseClick = () => {
-    closeTicket();
-  };
-
   return (
-    <Layout setFilter={props.setFilter} filter={props.filter}>
-      <main css={screenWidth && allTicketsStyles(screenWidth)}>
+    <Sidebar setFilter={props.setFilter} filter={props.filter}>
+      <main css={screenWidth && ticketsStyles(screenWidth)}>
         <div className="top-bar">
           <SelectCategory />
           <SearchBar />
@@ -111,7 +95,7 @@ export default function AllTickets(props: AllTicketsProps) {
             <img src="refresh-icon.jpg" alt="two arrows in form of a circle" />
           </button>
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
-          <button onClick={handleLogOutClick}>
+          <button onClick={() => logOut()}>
             <img src="logout-icon.png" alt="a stylized door with an arrow" />
           </button>
         </div>
@@ -148,15 +132,15 @@ export default function AllTickets(props: AllTicketsProps) {
       {showMessagePanel && (
         <MessagePanel
           openedTicket={openedTicket}
-          employee={props.employee}
           employeeId={props.employeeId}
           setShowMessagePanel={setShowMessagePanel}
-          handleTicketDeleteClick={handleTicketDeleteClick}
-          handleTicketCloseClick={handleTicketCloseClick}
           setOngoingTicket={setOngoingTicket}
+          deleteTicket={deleteTicket}
+          closeTicket={closeTicket}
+          employee={props.employee}
         />
       )}
-    </Layout>
+    </Sidebar>
   );
 }
 
@@ -170,16 +154,14 @@ export const getServerSideProps = async (
   if (!data.data.employeeSession) {
     return {
       redirect: {
-        destination: '/?returnTo=/allTickets',
+        destination: '/?returnTo=/tickets',
         permanent: false,
       },
     };
   }
-  console.log('data.data.employeeSession', data.data.employeeSession);
   const employeeId = data.data.employeeSession.employee_id;
   const res2 = await employeeDataFetch(employeeId, apiUrl);
   const data2 = await res2.json();
-  console.log('data2', data2);
 
   return {
     props: {

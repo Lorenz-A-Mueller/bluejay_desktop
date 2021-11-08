@@ -1,83 +1,46 @@
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import { isConstValueNode } from 'graphql';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   createMessageWithResponderIdMutation,
-  getMessageQuery,
   getMessagesQuery,
   getTicketInformationQuery,
 } from '../utils/queries';
 import { messagePanelStyles } from '../utils/styles';
-import HeaderBar from './HeaderBar';
+import { Message, MessagePanelProps, Ticket } from '../utils/types';
 import MessageField from './MessageField';
+import MessagePanelHeader from './MessagePanelHeader';
 
-type Props = {
-  openedTicket: string;
-
-  employeeId: string | undefined;
-  setShowMessagePanel: (arg: boolean) => void;
-  handleTicketDeleteClick: () => void;
-  handleTicketCloseClick: () => void;
-  setOngoingTicket: () => void;
-};
-
-export default function MessagePanel(props: Props) {
-  const [ticketData, setTicketData] = useState({});
+export default function MessagePanel(props: MessagePanelProps) {
+  const [ticketData, setTicketData] = useState<Ticket | {}>({});
   const [messages, setMessages] = useState([]);
   const [newMessageText, setNewMessageText] = useState('');
-  console.log('messages', messages);
-  console.log('TICKET DATA: ', ticketData);
 
   // query data about clicked-on ticket
 
-  const { loading, error, data } = useQuery(getTicketInformationQuery, {
+  const { data } = useQuery(getTicketInformationQuery, {
     variables: { ticketId: props.openedTicket },
     onCompleted: () => {
-      console.log(data);
       setTicketData(data.ticket);
       getMessages();
     },
     fetchPolicy: 'network-only',
   });
 
-  const [
-    getMessages,
-    {
-      loading: getMessagesLoading,
-      error: getMessagesError,
-      data: getMessagesData,
-    },
-  ] = useLazyQuery(getMessagesQuery, {
+  const [getMessages] = useLazyQuery(getMessagesQuery, {
     variables: { ticketID: props.openedTicket },
     onCompleted: (getMessagesData) => {
-      console.log('data in getMessages: ', getMessagesData);
       setMessages(getMessagesData.messages);
     },
     fetchPolicy: 'network-only',
   });
 
-  const handleMessageSendClick = () => {
-    console.log('ticketData.id: ', ticketData.id);
-    console.log('newMEssageText: ', newMessageText);
-    console.log('responderID: ', props.employeeId);
-    sendMessage();
-  };
-
-  const [
-    sendMessage,
-    {
-      loading: sendMessageLoading,
-      error: sendMessageError,
-      data: sendMessageData,
-    },
-  ] = useMutation(createMessageWithResponderIdMutation, {
+  const [sendMessage] = useMutation(createMessageWithResponderIdMutation, {
     variables: {
-      ticketID: ticketData.id,
+      ticketID: 'id' in ticketData && ticketData.id,
       content: newMessageText,
       responderID: props.employeeId,
     },
-    onCompleted: (thisData) => {
-      console.log('data after creating message with responserId', thisData);
+    onCompleted: () => {
       getMessages();
       setNewMessageText('');
       props.setOngoingTicket();
@@ -91,12 +54,12 @@ export default function MessagePanel(props: Props) {
         <img src="x-icon.jpg" alt="an 'x'" />
       </button>
       <div className="blue-square">
-        <HeaderBar ticket={data && data.ticket} />
+        <MessagePanelHeader ticket={data && data.ticket} />
         <div className="title-bar">
           <p>{data && data.ticket.title}</p>
         </div>
         {messages.length &&
-          messages.map((message) => (
+          messages.map((message: Message) => (
             <MessageField
               key={`message-key-${message.content}`}
               message={message}
@@ -114,13 +77,13 @@ export default function MessagePanel(props: Props) {
               />
             </button>
             {data && data.ticket.status !== '3' && (
-              <button onClick={handleMessageSendClick} className="send-button">
+              <button onClick={() => sendMessage()} className="send-button">
                 Send
               </button>
             )}
             {data && data.ticket.status !== '3' && (
               <button
-                onClick={props.handleTicketCloseClick}
+                onClick={() => props.closeTicket()}
                 className="close-button"
               >
                 Close ticket
@@ -132,7 +95,7 @@ export default function MessagePanel(props: Props) {
               </button>
             )}
             <button
-              onClick={props.handleTicketDeleteClick}
+              onClick={() => props.deleteTicket()}
               className="delete-button"
             >
               Delete ticket

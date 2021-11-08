@@ -1,7 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import { report } from 'process';
 import { useEffect, useState } from 'react';
-import extractTicketReportData from '../utils/extractTicketReportData';
 import {
   getCategoriesQuery,
   getEmployeesQuery,
