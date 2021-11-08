@@ -17,19 +17,13 @@ import {
   getTicketInformationQuery,
 } from '../utils/queries';
 import { allTicketsStyles } from '../utils/styles';
-import { Ticket } from '../utils/types';
+import { AllTicketsProps, Ticket } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
-
-type AllTicketsProps = {
-  employee: {
-    first_name: string;
-  };
-  employeeId: string;
-};
 
 export default function AllTickets(props: AllTicketsProps) {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
+
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
 
@@ -108,7 +102,7 @@ export default function AllTickets(props: AllTicketsProps) {
   };
 
   return (
-    <Layout>
+    <Layout setFilter={props.setFilter} filter={props.filter}>
       <main css={screenWidth && allTicketsStyles(screenWidth)}>
         <div className="top-bar">
           <SelectCategory />
@@ -122,6 +116,15 @@ export default function AllTickets(props: AllTicketsProps) {
           </button>
         </div>
         <div className="tile-area">
+          <h1>
+            {'filter' in props && props.filter === ''
+              ? 'All tickets'
+              : props.filter === 'unassigned'
+              ? 'Unassigned Tickets'
+              : props.filter === 'NEW'
+              ? 'New Tickets'
+              : 'Archive'}
+          </h1>
           {data &&
             data.tickets.map((ticket: Ticket) => (
               <Tile
@@ -137,6 +140,7 @@ export default function AllTickets(props: AllTicketsProps) {
                 assigneeId={ticket.assignee_id}
                 customerId={ticket.customer_id}
                 handleTileClick={handleTileClick}
+                filter={props.filter}
               />
             ))}
         </div>

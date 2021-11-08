@@ -3,6 +3,7 @@ import { Global } from '@emotion/react';
 import { createHttpLink } from 'apollo-link-http';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useState } from 'react';
 import { globalStyles } from '../utils/styles';
 
 const link = createHttpLink({
@@ -16,6 +17,7 @@ const client = new ApolloClient({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [filter, setFilter] = useState('');
   return (
     <>
       <Head>
@@ -26,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ApolloProvider client={client}>
         <Global styles={globalStyles} />
-        <Component {...pageProps} />
+        <Component {...pageProps} filter={filter} setFilter={setFilter} />
       </ApolloProvider>
     </>
   );

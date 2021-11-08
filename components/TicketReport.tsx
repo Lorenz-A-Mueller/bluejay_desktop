@@ -8,6 +8,7 @@ import {
   getStatusesQuery,
 } from '../utils/queries';
 import { ticketReportStyles } from '../utils/styles';
+import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
 import { Category, Employee, Status, TicketReportProps } from '../utils/types';
 import PieChartContainer from './PieChartContainer';
 
@@ -53,6 +54,13 @@ export default function TicketReport(props: TicketReportProps) {
     getEmployees();
     getCategories();
   }, [getStatuses, getEmployees, getCategories]);
+
+  const graphLength = {
+    width:
+      'byDay' in props.reportData
+        ? `${props.reportData.byDay.length * 52}px`
+        : '0',
+  };
 
   return (
     <div css={ticketReportStyles}>
@@ -119,28 +127,43 @@ export default function TicketReport(props: TicketReportProps) {
             <p>10</p>
             <p>5</p>
           </div>
-          <div className="fake-line-container">
-            <div className="fake-line" />
-            <div className="fake-line" />
-            <div className="fake-line" />
-            <div className="fake-line" />
-            <div className="fake-line penultimate" />
-            <div className="fake-line last" />
-            <div className="column-container">
-              <div className="column" />
-              <div className="column" />
-              <div className="column" />
-              <div className="column" />
+          <div className="fake-line-container" style={graphLength}>
+            <div className="fake-line" style={graphLength} />
+            <div className="fake-line" style={graphLength} />
+            <div className="fake-line" style={graphLength} />
+            <div className="fake-line" style={graphLength} />
+            <div className="fake-line penultimate" style={graphLength} />
+            <div className="fake-line last" style={graphLength} />
+            <div className="column-container" style={graphLength}>
+              {'byDay' in props.reportData &&
+                props.reportData.byDay.map((element) => {
+                  return (
+                    <div
+                      className="column"
+                      key={`column-key-#${Math.random()}`}
+                      // on default scale to 20, one ticket = 4px (height of "fake-line" boxes = 20px)
+                      style={{ height: `${element * 4}px` }}
+                    />
+                  );
+                })}
             </div>
             <div className="date-container">
-              <div className="date">08/08</div>
-              <div className="date">09/08</div>
-              <div className="date">10/08</div>
-              <div className="date">11/08</div>
+              {'byDay' in props.reportData &&
+                props.reportData.byDay.map((element, index) => {
+                  return (
+                    <div className="date" key={`date-key-#${Math.random()}`}>
+                      {'earliestTicketCreationTimestamp' in props.reportData &&
+                        transformTimestampIntoDatetime(
+                          (
+                            props.reportData.earliestTicketCreationTimestamp +
+                            index * 1000 * 60 * 60 * 24
+                          ).toString(),
+                        ).slice(5, -5)}
+                    </div>
+                  );
+                })}
             </div>
           </div>
-
-          {/* <div className="blue-test"></div> */}
         </div>
       </div>
     </div>

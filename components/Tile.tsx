@@ -1,5 +1,6 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import { calculateNumberOfDays } from '../utils/calculateNumberOfDays';
 import {
   getCategoryQuery,
   getCustomerNumberQuery,
@@ -15,6 +16,7 @@ export default function Tile(props: TileProps) {
   const [createdDatetime, setCreatedDatetime] = useState('');
   const [lastResponseDatetime, setLastResponseDatetime] = useState('');
   const [customerNumber, setCustomerNumber] = useState('');
+  const [statusName, setStatusName] = useState('');
 
   // get Customer number from id
 
@@ -24,6 +26,7 @@ export default function Tile(props: TileProps) {
     onCompleted: () => {
       setCustomerNumber(data.customer.number);
       console.log('props.status', props.status);
+
       getStatus();
     },
     // must be set so the query doesn't use the cache (could not be called several times)
@@ -37,6 +40,7 @@ export default function Tile(props: TileProps) {
       variables: { statusID: props.status },
       onCompleted: () => {
         console.log('getStatusQueryData', getStatusQueryData);
+        setStatusName(getStatusQueryData.status.status_name);
       },
       fetchPolicy: 'network-only',
     },
@@ -71,6 +75,11 @@ export default function Tile(props: TileProps) {
     }
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
+
+    console.log(
+      'days since ticket creation: ',
+      calculateNumberOfDays(Number(props.created)),
+    );
     getCategory();
   }, [props.status, props.created, props.lastResponse, getCategory]);
 
@@ -80,6 +89,14 @@ export default function Tile(props: TileProps) {
     <button
       css={screenWidth && tileStyles(screenWidth)}
       onClick={() => props.handleTileClick(props.ticketId)}
+      style={{
+        display: !props.filter
+          ? 'flex'
+          : props.filter === statusName ||
+            (props.filter === 'unassigned' && !props.assigneeId)
+          ? 'flex'
+          : 'none',
+      }}
     >
       <div className="rectangular-box">
         <div className="status-box" style={{ backgroundColor: statusBoxColor }}>

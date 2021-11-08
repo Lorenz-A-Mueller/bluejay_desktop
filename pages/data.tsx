@@ -15,15 +15,8 @@ import {
   getTicketInformationQuery,
 } from '../utils/queries';
 import { dataStyles } from '../utils/styles';
-import { ReportData, Ticket } from '../utils/types';
+import { DataProps, ReportData, Ticket } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
-
-type DataProps = {
-  employee: {
-    first_name: string;
-  };
-  employeeId: string;
-};
 
 export default function Data(props: DataProps) {
   const screenWidth = useWindowDimensions().width;
@@ -72,7 +65,7 @@ export default function Data(props: DataProps) {
   };
 
   return (
-    <Layout>
+    <Layout setFilter={props.setFilter} filter={props.filter}>
       <main css={screenWidth && dataStyles(screenWidth)}>
         <div className="top-bar">
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>

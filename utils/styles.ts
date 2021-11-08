@@ -164,7 +164,7 @@ export const layoutStyles = (screenHeight: number) => css`
     margin-top: ${(scale[6] * screenHeight) / 1024}px;
 
     p {
-      font-size: ${scale[8]};
+      font-size: ${scale[8]}px;
       font-weight: bold;
       margin: ${(scale[9] * screenHeight) / 1024}px 0
         ${(scale[4] * screenHeight) / 1024}px 0;
@@ -175,6 +175,20 @@ export const layoutStyles = (screenHeight: number) => css`
       margin-top: ${(scale[6] * screenHeight) / 1024}px;
       background-color: transparent;
 
+      :first-of-type(1) {
+        width: ${(scale[14] * screenHeight) / 1024}px;
+        margin-left: ${(scale[3] * screenHeight) / 1024}px;
+      }
+      :nth-of-type(2) {
+        width: ${(scale[16] * screenHeight) / 1024}px;
+        margin: ${(scale[3] * screenHeight) / 1024}px 0
+          ${(scale[6] * screenHeight) / 1024}px
+          ${(scale[5] * screenHeight) / 1024}px;
+      }
+      :last-of-type {
+        margin-top: ${(scale[12] * screenHeight) / 1024}px;
+      }
+
       img {
         width: 100%;
         height: auto;
@@ -184,13 +198,6 @@ export const layoutStyles = (screenHeight: number) => css`
     > img {
       width: ${(scale[14] * screenHeight) / 1024}px;
       margin-top: ${(scale[6] * screenHeight) / 1024}px;
-      :nth-of-type(1) {
-        width: ${(scale[15] * screenHeight) / 1024}px;
-        margin-left: ${(scale[3] * screenHeight) / 1024}px;
-      }
-      :last-of-type {
-        margin-top: ${(scale[9] * screenHeight) / 1024}px;
-      }
     }
   }
   > img {
@@ -236,6 +243,10 @@ export const allTicketsStyles = (screenWidth: number) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    h1 {
+      margin-left: ${scale[8] * 2}px;
+      margin-top: ${scale[9]}px;
+    }
   }
 `;
 
@@ -312,10 +323,6 @@ export const tileStyles = (screenWidth: number) => css`
   align-items: center;
 
   color: black; // must specify bc it is a button now (which are white)
-
-  &:first-of-type {
-    margin-top: ${scale[6]}px;
-  }
 
   .rectangular-box {
     height: ${scale[17]}px;
@@ -852,12 +859,13 @@ export const ticketReportStyles = css`
 
       .fake-line-container {
         position: relative;
+        /* width: ${scale[30]}px; */
         width: ${scale[28] + scale[16]}px;
         overflow-x: scroll;
 
         .fake-line {
           height: ${scale[8]}px;
-          width: ${scale[29]}px;
+          /* width: ${scale[29]}px; */
           border-bottom: solid ${lightGray} ${scale[2]}px;
         }
         .penultimate {
@@ -892,9 +900,10 @@ export const ticketReportStyles = css`
         align-items: flex-end;
         .date {
           width: ${scale[10]}px;
+          min-width: ${scale[10]}px;
+          max-width: ${scale[10]}px;
           font-size: ${scale[6]}px;
           font-weight: bold;
-          /* background-color: red; */
           margin-right: ${scale[8]}px;
           margin-bottom: 2px;
         }

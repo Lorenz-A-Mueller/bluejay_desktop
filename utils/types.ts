@@ -25,6 +25,7 @@ export type TileProps = {
   customerId: string;
   ticketNumber: string;
   handleTileClick: (arg0: string) => void;
+  filter: string;
 };
 
 export type HeaderProps = {
@@ -65,6 +66,9 @@ export type ReportData =
       byStatus: number[];
       byAssignee: number[];
       byCategory: number[];
+      numberOfDays: number;
+      earliestTicketCreationTimestamp: number;
+      byDay: number[];
     }
   | {};
 
@@ -81,4 +85,27 @@ export type Employee = {
 export type Category = {
   id: string;
   category_name: string;
+};
+
+export type LayoutProps = {
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+  filter: string;
+};
+
+export type AllTicketsProps = {
+  employee: {
+    first_name: string;
+  };
+  employeeId: string;
+  filter: string;
+  setFilter: (arg0: string) => void;
+};
+
+export type DataProps = {
+  employee: {
+    first_name: string;
+  };
+  employeeId: string;
+  filter: string;
+  setFilter: (arg0: string) => void;
 };

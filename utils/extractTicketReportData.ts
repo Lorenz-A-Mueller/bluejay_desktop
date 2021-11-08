@@ -1,3 +1,5 @@
+import { calculateNumberOfDays } from './calculateNumberOfDays';
+import { transformTimestampIntoDatetime } from './transformTimestampIntoDatetime';
 import { Ticket } from './types';
 
 export default async function extractTicketReportData(tickets: Ticket[]) {
@@ -73,7 +75,7 @@ export default async function extractTicketReportData(tickets: Ticket[]) {
   console.log('byCategory: ', byCategoryArray);
   console.log('byAssigneeArray: ', byAssigneeArray);
 
-  //
+  // get arrays that only contain assigned/closed tickets -> can derive number with ".length"
 
   const assignedTicketArray = tickets.filter((ticket) => {
     return ticket.assignee_id;
@@ -81,6 +83,42 @@ export default async function extractTicketReportData(tickets: Ticket[]) {
   const closedTicketArray = tickets.filter((ticket) => {
     return ticket.status === '3';
   });
+
+  // get number of days since earliest ticket
+
+  let earliestTimestamp: number = Date.now();
+
+  for (const ticket of tickets) {
+    if (earliestTimestamp > Number(ticket.created)) {
+      earliestTimestamp = Number(ticket.created);
+    }
+  }
+
+  const numberOfDaysSinceEarliestTimestamp =
+    calculateNumberOfDays(earliestTimestamp);
+  console.log(
+    'numberOfDaysSinceEarliestTimestamp',
+    numberOfDaysSinceEarliestTimestamp,
+  );
+
+  //
+
+  const earliestDate = transformTimestampIntoDatetime(
+    earliestTimestamp.toString(),
+  );
+
+  //
+
+  const byDayArray = new Array(numberOfDaysSinceEarliestTimestamp).fill(0);
+  tickets.forEach((ticket) => {
+    const passedDaysSinceEarliestDate =
+      calculateNumberOfDays(earliestTimestamp, Number(ticket.created)) - 1;
+
+    byDayArray[passedDaysSinceEarliestDate] += 1;
+  });
+  console.log('byDayArray: ', byDayArray);
+
+  //
 
   return {
     totalTickets: tickets.length || 0,
@@ -91,5 +129,8 @@ export default async function extractTicketReportData(tickets: Ticket[]) {
     byStatus: byStatusArray,
     byCategory: byCategoryArray,
     byAssignee: byAssigneeArray,
+    numberOfDays: numberOfDaysSinceEarliestTimestamp,
+    earliestTicketCreationTimestamp: earliestTimestamp,
+    byDay: byDayArray,
   };
 }
