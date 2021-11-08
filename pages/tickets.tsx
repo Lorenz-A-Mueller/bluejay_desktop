@@ -102,7 +102,7 @@ export default function Tickets(props: TicketsProps) {
         <div className="tile-area">
           <h1>
             {'filter' in props && props.filter === ''
-              ? 'All tickets'
+              ? 'Pending Tickets'
               : props.filter === 'unassigned'
               ? 'Unassigned Tickets'
               : props.filter === 'NEW'

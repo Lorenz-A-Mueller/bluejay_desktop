@@ -19,7 +19,6 @@ export default function TicketReport(props: TicketReportProps) {
     getCategoriesQuery,
     {
       onCompleted: () => {
-        console.log('getCategoriesQueryData: ', getCategoriesQueryData);
         setCategoriesData(getCategoriesQueryData.categories);
       },
       fetchPolicy: 'network-only',
@@ -30,7 +29,6 @@ export default function TicketReport(props: TicketReportProps) {
     getStatusesQuery,
     {
       onCompleted: () => {
-        console.log('getStatusesQueryData: ', getStatusesQueryData);
         setStatusesData(getStatusesQueryData.statuses);
       },
       fetchPolicy: 'network-only',
@@ -41,7 +39,6 @@ export default function TicketReport(props: TicketReportProps) {
     getEmployeesQuery,
     {
       onCompleted: () => {
-        console.log('getEmployeesQueryData: ', getEmployeesQueryData);
         setEmployeesData(getEmployeesQueryData.employees);
       },
       fetchPolicy: 'network-only',

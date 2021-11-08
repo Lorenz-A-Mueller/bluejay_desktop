@@ -79,12 +79,15 @@ export default function Tile(props: TileProps) {
       css={screenWidth && tileStyles(screenWidth)}
       onClick={() => props.handleTileClick(props.ticketId)}
       style={{
-        display: !props.filter
-          ? 'flex'
-          : props.filter === statusName ||
-            (props.filter === 'unassigned' && !props.assigneeId)
-          ? 'flex'
-          : 'none',
+        display:
+          !props.filter && statusName !== 'CLOSED'
+            ? 'flex'
+            : props.filter === statusName ||
+              (props.filter === 'unassigned' &&
+                !props.assigneeId &&
+                statusName !== 'CLOSED')
+            ? 'flex'
+            : 'none',
       }}
     >
       <div className="rectangular-box">
