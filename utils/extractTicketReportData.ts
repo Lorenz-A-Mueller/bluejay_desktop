@@ -1,7 +1,11 @@
 import { calculateNumberOfDays } from './calculateNumberOfDays';
 import { Ticket } from './types';
 
-export default async function extractTicketReportData(tickets: Ticket[]) {
+export default async function extractTicketReportData(
+  tickets: Ticket[],
+  startTimestamp: number,
+  endTimestamp: number,
+) {
   const apiUrl = 'http://localhost:4000/graphql';
 
   // query statuses in order to get number of available statuses
@@ -89,15 +93,24 @@ export default async function extractTicketReportData(tickets: Ticket[]) {
     }
   }
 
-  const numberOfDaysSinceEarliestTimestamp =
-    calculateNumberOfDays(earliestTimestamp);
+  //
+
+  let latestTimestamp: number = earliestTimestamp;
+
+  for (const ticket of tickets) {
+    if (latestTimestamp < Number(ticket.created)) {
+      latestTimestamp = Number(ticket.created);
+    }
+  }
+
+  const numberOfDays = calculateNumberOfDays(startTimestamp, endTimestamp);
 
   //
 
-  const byDayArray = new Array(numberOfDaysSinceEarliestTimestamp).fill(0);
+  const byDayArray = new Array(numberOfDays + 1).fill(0);
   tickets.forEach((ticket) => {
     const passedDaysSinceEarliestDate =
-      calculateNumberOfDays(earliestTimestamp, Number(ticket.created)) - 1;
+      calculateNumberOfDays(startTimestamp, Number(ticket.created)) - 1;
 
     byDayArray[passedDaysSinceEarliestDate] += 1;
   });
@@ -113,7 +126,7 @@ export default async function extractTicketReportData(tickets: Ticket[]) {
     byStatus: byStatusArray,
     byCategory: byCategoryArray,
     byAssignee: byAssigneeArray,
-    numberOfDays: numberOfDaysSinceEarliestTimestamp,
+    // numberOfDays: numberOfDaysSinceEarliestTimestamp,
     earliestTicketCreationTimestamp: earliestTimestamp,
     byDay: byDayArray,
   };

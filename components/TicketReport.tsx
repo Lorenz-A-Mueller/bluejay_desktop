@@ -15,7 +15,7 @@ export default function TicketReport(props: TicketReportProps) {
   const [employeesData, setEmployeesData] = useState<Employee[]>([]);
   const [categoriesData, setCategoriesData] = useState<Category[]>([]);
 
-  console.log('props.customDates: ', props.customDates);
+  console.log('props.reportData: ', props.reportData);
 
   const [getCategories, { data: getCategoriesQueryData }] = useLazyQuery(
     getCategoriesQuery,
@@ -149,13 +149,14 @@ export default function TicketReport(props: TicketReportProps) {
                 props.reportData.byDay.map((element, index) => {
                   return (
                     <div className="date" key={`date-key-#${Math.random()}`}>
-                      {'earliestTicketCreationTimestamp' in props.reportData &&
-                        transformTimestampIntoDatetime(
-                          (
-                            props.reportData.earliestTicketCreationTimestamp +
-                            index * 1000 * 60 * 60 * 24
-                          ).toString(),
-                        ).slice(5, -5)}
+                      {'timeLineStart' in props
+                        ? transformTimestampIntoDatetime(
+                            (
+                              props.timeLineStart +
+                              index * 1000 * 60 * 60 * 24
+                            ).toString(),
+                          ).slice(5, -5)
+                        : {}}
                     </div>
                   );
                 })}

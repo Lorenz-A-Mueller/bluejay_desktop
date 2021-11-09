@@ -6,20 +6,28 @@ import { ChooseDateBarProps } from '../utils/types';
 export default function ChooseDateBar(props: ChooseDateBarProps) {
   const [calendarRange, setCalendarRange] = useState([new Date(), new Date()]);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [chooseAllClicked, setChooseAllClicked] = useState(false);
+  const [chooseAllClicked, setChooseAllClicked] = useState(true);
+
+  console.log('NEW DATE: ', new Date().setHours(0, 0, 0, 0));
+  console.log(typeof new Date().setHours(0, 0, 0, 0));
 
   // set Dates to earliest day -- today
 
   useEffect(() => {
-    if ('earliestTicketCreationTimestamp' in props.reportData) {
+    if (
+      'earliestTicketCreationTimestamp' in props.reportData &&
+      chooseAllClicked
+    ) {
       setCalendarRange([
         new Date(props.reportData.earliestTicketCreationTimestamp),
         new Date(Date.now()),
       ]);
+      props.setTimeLineStart(props.reportData.earliestTicketCreationTimestamp);
+      props.setTimeLineEnd(new Date().setHours(0, 0, 0, 0));
     }
-  }, [props.reportData]);
+  }, [props, chooseAllClicked]);
 
-  //
+  // set Dates to date input by user
 
   useEffect(() => {
     if (
@@ -30,6 +38,10 @@ export default function ChooseDateBar(props: ChooseDateBarProps) {
         Date.parse(calendarRange[0].toDateString()),
         Date.parse(calendarRange[1].toDateString()),
       );
+      props.setTimeLineStart(
+        Number(Date.parse(calendarRange[0].toDateString())),
+      );
+      props.setTimeLineEnd(Number(Date.parse(calendarRange[1].toDateString())));
     }
   }, [props, chooseAllClicked, calendarRange]);
 

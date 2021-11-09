@@ -8,5 +8,5 @@ export const calculateNumberOfDays = (
 
   const timeDifference = endTimestamp - startTimestamp;
   const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
-  return Math.ceil(dayDifference + 1);
+  return Math.ceil(dayDifference);
 };

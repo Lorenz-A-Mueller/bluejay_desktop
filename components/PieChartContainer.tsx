@@ -22,6 +22,7 @@ export default function PieChartContainer(props: PieChartContainerProps) {
     Status[] | Employee[] | Category[]
   >([]);
   const [sectorNumber, setSectorNumber] = useState(0);
+  const [showGrayPieChart, setShowGrayPieChart] = useState(false);
   useEffect(() => {
     if (props.statusesData && 'byStatus' in props.reportData) {
       setSectorTitles(props.statusesData);
@@ -32,6 +33,28 @@ export default function PieChartContainer(props: PieChartContainerProps) {
     } else if (props.categoriesData && 'byCategory' in props.reportData) {
       setSectorTitles(props.categoriesData);
       setSectorNumber(props.reportData.byCategory.length);
+    }
+
+    if (
+      'byCategory' in props.reportData &&
+      props.categoriesData &&
+      props.reportData.byCategory.every((element: number) => element === 0)
+    ) {
+      setShowGrayPieChart(true);
+    } else if (
+      'byStatus' in props.reportData &&
+      props.statusesData &&
+      props.reportData.byStatus.every((element: number) => element === 0)
+    ) {
+      setShowGrayPieChart(true);
+    } else if (
+      'byAssignee' in props.reportData &&
+      props.employeesData &&
+      props.reportData.byAssignee.every((element: number) => element === 0)
+    ) {
+      setShowGrayPieChart(true);
+    } else {
+      setShowGrayPieChart(false);
     }
   }, [
     props.statusesData,
@@ -80,12 +103,24 @@ export default function PieChartContainer(props: PieChartContainerProps) {
       <p>By {props.keyword}</p>
       <div className="pie-chart-and-legend-container">
         <div className="pie-chart-wrapper">
-          {'statusesData' in props && <PieChart data={statusPieChartArray} />}
-          {'categoriesData' in props && (
+          {'statusesData' in props && !showGrayPieChart && (
+            <PieChart data={statusPieChartArray} />
+          )}
+          {'categoriesData' in props && !showGrayPieChart && (
             <PieChart data={categoryPieChartArray} />
           )}
-          {'employeesData' in props && (
+          {'employeesData' in props && !showGrayPieChart && (
             <PieChart data={assigneePieChartArray} />
+          )}
+          {showGrayPieChart && (
+            <PieChart
+              data={[
+                {
+                  value: 1,
+                  color: '#C4C4C4',
+                },
+              ]}
+            />
           )}
         </div>
         <div className="legend-wrapper">

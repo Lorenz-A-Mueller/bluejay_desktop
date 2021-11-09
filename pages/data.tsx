@@ -24,13 +24,25 @@ export default function Data(props: DataProps) {
   const [reportData, setReportData] = useState<ReportData | {}>({});
   const [customTimeStart, setCustomTimeStart] = useState('');
   const [customTimeEnd, setCustomTimeEnd] = useState('');
+  const [timeLineStart, setTimeLineStart] = useState(1602530160000);
+  const [timeLineEnd, setTimeLineEnd] = useState(
+    Date.parse(new Date().toDateString()),
+  );
 
   const [getAllTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
     getAllTicketsQuery,
     {
       onCompleted: async () => {
+        console.log(
+          'getAllTicketsQueryData.tickets: ',
+          getAllTicketsQueryData.tickets,
+        );
         setReportData(
-          await extractTicketReportData(getAllTicketsQueryData.tickets),
+          await extractTicketReportData(
+            getAllTicketsQueryData.tickets,
+            timeLineStart,
+            timeLineEnd,
+          ),
         );
       },
       fetchPolicy: 'network-only',
@@ -62,6 +74,7 @@ export default function Data(props: DataProps) {
       startTime.toString(),
     );
     setCustomTimeStart(startTimeAsTimeString);
+    setTimeLineStart(Number.parseInt(startTimeAsTimeString, 10));
     const endTimeAsTimeString = transformTimestampIntoDatetime2(
       endTime.toString(),
     );
@@ -74,7 +87,11 @@ export default function Data(props: DataProps) {
       onCompleted: async () => {
         console.log('getTicketsInTimeFrameData', getTicketsInTimeFrameData);
         setReportData(
-          await extractTicketReportData(getTicketsInTimeFrameData.tickets),
+          await extractTicketReportData(
+            getTicketsInTimeFrameData.ticketsByTimeFrame,
+            timeLineStart,
+            timeLineEnd,
+          ),
         );
       },
       fetchPolicy: 'network-only',
@@ -82,9 +99,6 @@ export default function Data(props: DataProps) {
 
   useEffect(() => {
     if (customTimeStart && customTimeEnd) {
-      console.log('customTimeStart: ', customTimeStart);
-      console.log('customTimeEnd: ', customTimeEnd);
-
       getTicketsInTimeFrame();
     }
   }, [customTimeEnd, customTimeStart, getTicketsInTimeFrame]);
@@ -104,8 +118,16 @@ export default function Data(props: DataProps) {
             handleChooseAllClick={() => getAllTickets()}
             reportData={reportData}
             handleCustomDates={handleCustomDates}
+            setTimeLineStart={setTimeLineStart}
+            setTimeLineEnd={setTimeLineEnd}
           />
-          <TicketReport reportData={reportData} />
+          <TicketReport
+            reportData={reportData}
+            customTimeStart={customTimeStart}
+            customTimeEnd={customTimeEnd}
+            timeLineStart={timeLineStart}
+            timeLineEnd={timeLineEnd}
+          />
         </div>
       </main>
     </SideBar>
