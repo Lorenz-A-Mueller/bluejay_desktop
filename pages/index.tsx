@@ -38,6 +38,7 @@ export default function Home() {
       setWasClicked(false);
     },
     skip: !wasClicked,
+    fetchPolicy: 'network-only',
   });
 
   return (

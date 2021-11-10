@@ -1,10 +1,4 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import {
-  getCategoryQuery,
-  getCustomerNumberQuery,
-  getStatusQuery,
-} from '../utils/queries';
 import { tileStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
 import { TileProps } from '../utils/types';
@@ -14,42 +8,11 @@ export default function Tile(props: TileProps) {
   const [statusBoxColor, setStatusBoxColor] = useState('#fff8b6');
   const [createdDatetime, setCreatedDatetime] = useState('');
   const [lastResponseDatetime, setLastResponseDatetime] = useState('');
-  const [customerNumber, setCustomerNumber] = useState('');
-  const [statusName, setStatusName] = useState('');
-
-  // get Customer number from id
-
-  const { data } = useQuery(getCustomerNumberQuery, {
-    // TODO: error-handling, loading-handling
-    variables: { idInput: props.customerId },
-    onCompleted: () => {
-      setCustomerNumber(data.customer.number);
-      getStatus();
-    },
-    // must be set so the query doesn't use the cache (could not be called several times)
-    fetchPolicy: 'network-only',
-    skip: !props.customerId,
-  });
-
-  const [getStatus, { data: getStatusQueryData }] = useLazyQuery(
-    getStatusQuery,
-    {
-      variables: { statusID: props.status },
-      onCompleted: () => {
-        setStatusName(getStatusQueryData.status.status_name);
-      },
-      fetchPolicy: 'network-only',
-    },
-  );
-
-  const [getCategory, { data: getCategoryQueryData }] = useLazyQuery(
-    getCategoryQuery,
-    {
-      variables: { categoryID: props.category },
-      onCompleted: () => {},
-      fetchPolicy: 'network-only',
-    },
-  );
+  const [thisPriorityName, setThisPriorityName] = useState('');
+  const [thisCategoryName, setThisCategoryName] = useState('');
+  const [thisStatusName, setThisStatusName] = useState('');
+  const [thisAssigneeName, setThisAssigneeName] = useState('');
+  const [thisCustomerNumber, setThisCustomerNumber] = useState('');
 
   // get StatusBoxColor according to status and convert timestamps into readable date-times
 
@@ -69,8 +32,40 @@ export default function Tile(props: TileProps) {
     }
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
-    getCategory();
-  }, [props.status, props.created, props.lastResponse, getCategory]);
+
+    setThisPriorityName(
+      props.priorities[Number.parseInt(props.priority, 10) - 1].priority_name,
+    );
+    setThisCategoryName(
+      props.categories[Number.parseInt(props.category, 10) - 1].category_name,
+    );
+    setThisStatusName(
+      props.statuses[Number.parseInt(props.status, 10) - 1].status_name,
+    );
+    if (props.assigneeId) {
+      setThisAssigneeName(
+        props.employees[Number.parseInt(props.assigneeId, 10) - 1].first_name,
+      );
+    } else {
+      setThisAssigneeName('not assigned');
+    }
+    setThisCustomerNumber(
+      props.customers[Number.parseInt(props.customerId, 10) - 1].number,
+    );
+  }, [
+    props.status,
+    props.created,
+    props.lastResponse,
+    props.priority,
+    props.priorities,
+    props.category,
+    props.statuses,
+    props.categories,
+    props.assigneeId,
+    props.employees,
+    props.customers,
+    props.customerId,
+  ]);
 
   const screenWidth = useWindowDimensions().width;
 
@@ -80,19 +75,19 @@ export default function Tile(props: TileProps) {
       onClick={() => props.handleTileClick(props.ticketId)}
       style={{
         display:
-          !props.filter && statusName !== 'CLOSED'
+          !props.filter && thisStatusName !== 'CLOSED'
             ? 'flex'
-            : props.filter === statusName ||
+            : props.filter === thisStatusName ||
               (props.filter === 'unassigned' &&
                 !props.assigneeId &&
-                statusName !== 'CLOSED')
+                thisStatusName !== 'CLOSED')
             ? 'flex'
             : 'none',
       }}
     >
       <div className="rectangular-box">
         <div className="status-box" style={{ backgroundColor: statusBoxColor }}>
-          <p>{getStatusQueryData && getStatusQueryData.status.status_name}</p>
+          <p>{thisStatusName}</p>
         </div>
         <div className="title-box">
           <p>{props.title} (2) </p> {/* TODO: show Number of messages */}
@@ -109,18 +104,15 @@ export default function Tile(props: TileProps) {
         </div>
         <div className="customer-id-box">
           <p>customer</p>
-          <p>{customerNumber}</p>
+          <p>{thisCustomerNumber}</p>
         </div>
         <div className="category-box">
           <p>category</p>
-          <p>
-            {getCategoryQueryData &&
-              getCategoryQueryData.category.category_name}
-          </p>
+          <p>{thisCategoryName}</p>
         </div>
         <div className="priority-box">
           <p>priority</p>
-          <p>{props.priority}</p>
+          <p>{thisPriorityName}</p>
         </div>
         <div className="created-box">
           <p>created</p>
@@ -130,25 +122,11 @@ export default function Tile(props: TileProps) {
           </p>
         </div>
         <div className="assigned-box">
-          {props.assigneeId ? (
-            <>
-              <div>
-                <p>assigned</p>
-
-                <p>{props.assigneeId} - Jennifer</p>
-              </div>
-              <img src="person.png" alt="a person" />
-              <div className="assigned-date-box">
-                <p>12/07/2021</p>
-                <p>13:24pm</p>
-              </div>
-            </>
-          ) : (
-            <div>
-              <p>assigned</p>
-              <p>Not assigned</p>
-            </div>
-          )}
+          <img src="person.png" alt="a person" />
+          <div>
+            <p>assigned</p>
+            <p>{thisAssigneeName}</p>
+          </div>
         </div>
       </div>
     </button>

@@ -52,6 +52,14 @@ export const getCustomerNumberQuery = gql`
   }
 `;
 
+export const getCustomerNumbersQuery = gql`
+  query {
+    customers {
+      number
+    }
+  }
+`;
+
 export const getAllTicketsQuery = gql`
   query {
     tickets {
@@ -222,6 +230,41 @@ export const getCategoryQuery = gql`
     category(id: $categoryID) {
       id
       category_name
+    }
+  }
+`;
+
+export const getPrioritiesQuery = gql`
+  query {
+    priorities {
+      id
+      priority_name
+    }
+  }
+`;
+
+export const getMessagePanelInfoQuery = gql`
+  query (
+    $statusID: ID!
+    $customerID: ID!
+    $priorityID: ID!
+    $categoryID: ID!
+    $assigneeID: ID!
+  ) {
+    status(id: $statusID) {
+      status_name
+    }
+    customer(search: { id: $customerID }) {
+      number
+    }
+    priority(id: $priorityID) {
+      priority_name
+    }
+    category(id: $categoryID) {
+      category_name
+    }
+    employee(search: { id: $assigneeID }) {
+      first_name
     }
   }
 `;

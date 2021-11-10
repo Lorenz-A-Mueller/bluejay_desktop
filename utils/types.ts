@@ -25,6 +25,20 @@ export type TileProps = {
   ticketNumber: string;
   handleTileClick: (arg0: string) => void;
   filter: string;
+  priorities: Priority[];
+  statuses: Status[];
+  categories: Category[];
+  employees: Employee[];
+  customers: Customer[];
+};
+
+export type Customer = {
+  number: string;
+};
+
+export type Priority = {
+  id: string;
+  priority_name: string;
 };
 
 export type MessagePanelHeaderProps = {

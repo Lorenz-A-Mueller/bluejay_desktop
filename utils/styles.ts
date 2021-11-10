@@ -452,11 +452,11 @@ export const tileStyles = (screenWidth: number) => css`
       img {
         margin-left: ${scale[6]}px;
       }
-      .assigned-date-box {
-        p {
-          font-size: ${scale[6]}px;
-          margin-left: ${scale[6]}px;
-        }
+      > div {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: ${scale[7]}px;
       }
     }
   }

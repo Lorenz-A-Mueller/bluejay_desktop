@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,11 @@ import {
   employeeDataFetch,
   employeeSessionFetch,
   getAllTicketsQuery,
+  getCategoriesQuery,
+  getCustomerNumbersQuery,
+  getEmployeesQuery,
+  getPrioritiesQuery,
+  getStatusesQuery,
 } from '../utils/queries';
 import { ticketsStyles } from '../utils/styles';
 import { Ticket, TicketsProps } from '../utils/types';
@@ -22,13 +27,64 @@ import useWindowDimensions from '../utils/useWindowDimensions';
 export default function Tickets(props: TicketsProps) {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
+  const [priorities, setPriorities] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [customers, setCustomers] = useState([]);
+
+  // fetch all Data necessary for associating id keys with corresponding data in tiles
+
+  const { data: getPrioritiesQueryData } = useQuery(getPrioritiesQuery, {
+    onCompleted: () => {
+      setPriorities(getPrioritiesQueryData.priorities);
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: getStatusesQueryData } = useQuery(getStatusesQuery, {
+    onCompleted: () => {
+      setStatuses(getStatusesQueryData.statuses);
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: getCategoriesQueryData } = useQuery(getCategoriesQuery, {
+    onCompleted: () => {
+      setCategories(getCategoriesQueryData.categories);
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: getEmployeesQueryData } = useQuery(getEmployeesQuery, {
+    onCompleted: () => {
+      setEmployees(getEmployeesQueryData.employees);
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: getCustomerNumbersQueryData } = useQuery(
+    getCustomerNumbersQuery,
+    {
+      onCompleted: () => {
+        alert('yes');
+        setCustomers(getCustomerNumbersQueryData.customers);
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  //
 
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
 
-  const [getTickets, { data }] = useLazyQuery(getAllTicketsQuery, {
-    fetchPolicy: 'network-only',
-  }); // TODO error-handling / loading-handling
+  const [getTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
+    getAllTicketsQuery,
+    {
+      fetchPolicy: 'network-only',
+    },
+  ); // TODO error-handling / loading-handling
 
   useEffect(() => {
     getTickets();
@@ -109,8 +165,8 @@ export default function Tickets(props: TicketsProps) {
               ? 'New Tickets'
               : 'Archive'}
           </h1>
-          {data &&
-            data.tickets.map((ticket: Ticket) => (
+          {getAllTicketsQueryData &&
+            getAllTicketsQueryData.tickets.map((ticket: Ticket) => (
               <Tile
                 key={`tile-key-${ticket.created}`}
                 ticketId={ticket.id}
@@ -125,6 +181,11 @@ export default function Tickets(props: TicketsProps) {
                 customerId={ticket.customer_id}
                 handleTileClick={handleTileClick}
                 filter={props.filter}
+                priorities={priorities}
+                categories={categories}
+                statuses={statuses}
+                employees={employees}
+                customers={customers}
               />
             ))}
         </div>
