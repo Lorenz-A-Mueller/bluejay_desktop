@@ -34,9 +34,9 @@ export default function Tickets(props: TicketsProps) {
     getTickets();
   }, [getTickets]);
 
-  const [logOut] = useMutation(deleteSessionMutation, {
-    variables: { employee_id: props.employeeId },
-    onCompleted: () => {
+  const [deleteSession] = useMutation(deleteSessionMutation, {
+    onCompleted: (deleteData) => {
+      console.log('deleteSessionMutationData: ', deleteData);
       router.push('/');
     },
     fetchPolicy: 'network-only',
@@ -48,11 +48,13 @@ export default function Tickets(props: TicketsProps) {
       console.log(deletedTicketData);
       setShowMessagePanel(false);
       getTickets();
-
-      // router.push('/');
     },
     fetchPolicy: 'network-only',
   });
+
+  const handleLogOutClick = () => {
+    deleteSession();
+  };
 
   const [closeTicket] = useMutation(changeTicketStatusMutation, {
     variables: { ticketID: openedTicket, statusID: '3' },
@@ -63,8 +65,6 @@ export default function Tickets(props: TicketsProps) {
       }, 500);
 
       getTickets();
-
-      // router.push('/');
     },
     fetchPolicy: 'network-only',
   });
@@ -95,7 +95,7 @@ export default function Tickets(props: TicketsProps) {
             <img src="refresh-icon.jpg" alt="two arrows in form of a circle" />
           </button>
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
-          <button onClick={() => logOut()}>
+          <button onClick={handleLogOutClick}>
             <img src="logout-icon.png" alt="a stylized door with an arrow" />
           </button>
         </div>

@@ -87,9 +87,12 @@ export const getTicketsInTimeFrameQuery = gql`
 `;
 
 export const deleteSessionMutation = gql`
-  mutation ($employee_id: ID!) {
-    deleteEmployeeSession(employee_id: $employee_id) {
+  mutation {
+    deleteEmployeeSession {
       id
+      token
+      employee_id
+      expiry_timestamp
     }
   }
 `;
