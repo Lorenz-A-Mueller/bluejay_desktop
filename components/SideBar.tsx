@@ -4,7 +4,7 @@ import { SideBarProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 export default function SideBar(props: SideBarProps) {
-  const route = useRouter();
+  const router = useRouter();
 
   return (
     <>
@@ -18,10 +18,12 @@ export default function SideBar(props: SideBarProps) {
           <button
             onClick={() => {
               props.setFilter('');
-              route.push('/tickets');
+              router.push('/tickets');
             }}
             style={
-              'filter' in props && props.filter === ''
+              'filter' in props &&
+              props.filter === '' &&
+              router.pathname === '/tickets'
                 ? {
                     marginLeft: '56px',
                     borderRadius: '8px',
@@ -39,7 +41,7 @@ export default function SideBar(props: SideBarProps) {
               props.setFilter((previous) => {
                 return previous === 'NEW' ? '' : 'NEW';
               });
-              route.push('/tickets');
+              router.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === 'NEW'
@@ -64,7 +66,7 @@ export default function SideBar(props: SideBarProps) {
               props.setFilter((previous) => {
                 return previous === 'unassigned' ? '' : 'unassigned';
               });
-              route.push('/tickets');
+              router.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === 'unassigned'
@@ -89,7 +91,7 @@ export default function SideBar(props: SideBarProps) {
               props.setFilter((previous) => {
                 return previous === 'CLOSED' ? '' : 'CLOSED';
               });
-              route.push('/tickets');
+              router.push('/tickets');
             }}
             style={
               'filter' in props && props.filter === 'CLOSED'
@@ -111,7 +113,7 @@ export default function SideBar(props: SideBarProps) {
         <button
           onClick={() => {
             props.setFilter('none');
-            route.push('/data');
+            router.push('/data');
           }}
         >
           <img src="data-icon.png" alt="a graph icon" />

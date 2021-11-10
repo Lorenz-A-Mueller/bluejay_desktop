@@ -10,7 +10,6 @@ import {
   deleteSessionMutation,
   employeeDataFetch,
   employeeSessionFetch,
-  getAllTicketsQuery,
   getTicketsInTimeFrameQuery,
 } from '../utils/queries';
 import { dataStyles } from '../utils/styles';
@@ -22,38 +21,9 @@ export default function Data(props: DataProps) {
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
   const [reportData, setReportData] = useState<ReportData | {}>({});
-  const [customTimeStart, setCustomTimeStart] = useState('');
-  const [customTimeEnd, setCustomTimeEnd] = useState('');
-  const [timeLineStart, setTimeLineStart] = useState(1602530160000);
-  const [timeLineEnd, setTimeLineEnd] = useState(
-    Date.parse(new Date().toDateString()),
-  );
-
-  const [getAllTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
-    getAllTicketsQuery,
-    {
-      onCompleted: async () => {
-        console.log(
-          'getAllTicketsQueryData.tickets: ',
-          getAllTicketsQueryData.tickets,
-        );
-        setReportData(
-          await extractTicketReportData(
-            getAllTicketsQueryData.tickets,
-            timeLineStart,
-            timeLineEnd,
-          ),
-        );
-      },
-      fetchPolicy: 'network-only',
-    },
-  );
-
-  // All Tickets is default value, -> useEffect
-
-  useEffect(() => {
-    getAllTickets();
-  }, [getAllTickets]);
+  // default: october 12, 2020, 00:00:00:000 GMT + 2
+  const [startDate, setStartDate] = useState(1602453600000);
+  const [endDate, setEndDate] = useState(Date.parse(new Date().toDateString()));
 
   const [logOut] = useMutation(deleteSessionMutation, {
     variables: { employee_id: props.employeeId },
@@ -65,32 +35,21 @@ export default function Data(props: DataProps) {
 
   //
 
-  const handleCustomDates = (startTime: number, endTime: number) => {
-    // query for given timeframe
-    console.log('startTime', startTime);
-    console.log('endTime', endTime);
-
-    const startTimeAsTimeString = transformTimestampIntoDatetime2(
-      startTime.toString(),
-    );
-    setCustomTimeStart(startTimeAsTimeString);
-    setTimeLineStart(Number.parseInt(startTimeAsTimeString, 10));
-    const endTimeAsTimeString = transformTimestampIntoDatetime2(
-      endTime.toString(),
-    );
-    setCustomTimeEnd(endTimeAsTimeString);
-  };
-
   const [getTicketsInTimeFrame, { data: getTicketsInTimeFrameData }] =
     useLazyQuery(getTicketsInTimeFrameQuery, {
-      variables: { intervalStart: customTimeStart, intervalEnd: customTimeEnd },
+      variables: {
+        intervalStart: transformTimestampIntoDatetime2(startDate.toString()),
+        // include the entirety of the last Date in the interval
+        intervalEnd: transformTimestampIntoDatetime2(
+          (endDate + 23 * 60 * 60 * 1000).toString(),
+        ),
+      },
       onCompleted: async () => {
-        console.log('getTicketsInTimeFrameData', getTicketsInTimeFrameData);
         setReportData(
           await extractTicketReportData(
             getTicketsInTimeFrameData.ticketsByTimeFrame,
-            timeLineStart,
-            timeLineEnd,
+            startDate,
+            endDate,
           ),
         );
       },
@@ -98,10 +57,10 @@ export default function Data(props: DataProps) {
     });
 
   useEffect(() => {
-    if (customTimeStart && customTimeEnd) {
+    if (startDate && endDate) {
       getTicketsInTimeFrame();
     }
-  }, [customTimeEnd, customTimeStart, getTicketsInTimeFrame]);
+  }, [startDate, endDate, getTicketsInTimeFrame]);
 
   return (
     <SideBar setFilter={props.setFilter} filter={props.filter}>
@@ -115,18 +74,15 @@ export default function Data(props: DataProps) {
         <div>
           <h1>Ticket Reports</h1>
           <ChooseDateBar
-            handleChooseAllClick={() => getAllTickets()}
+            getTicketsInTimeFrame={getTicketsInTimeFrame}
             reportData={reportData}
-            handleCustomDates={handleCustomDates}
-            setTimeLineStart={setTimeLineStart}
-            setTimeLineEnd={setTimeLineEnd}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
           />
           <TicketReport
             reportData={reportData}
-            customTimeStart={customTimeStart}
-            customTimeEnd={customTimeEnd}
-            timeLineStart={timeLineStart}
-            timeLineEnd={timeLineEnd}
+            startDate={startDate}
+            endDate={endDate}
           />
         </div>
       </main>

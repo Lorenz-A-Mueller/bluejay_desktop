@@ -149,10 +149,10 @@ export default function TicketReport(props: TicketReportProps) {
                 props.reportData.byDay.map((element, index) => {
                   return (
                     <div className="date" key={`date-key-#${Math.random()}`}>
-                      {'timeLineStart' in props
+                      {'startDate' in props
                         ? transformTimestampIntoDatetime(
                             (
-                              props.timeLineStart +
+                              props.startDate +
                               index * 1000 * 60 * 60 * 24
                             ).toString(),
                           ).slice(5, -5)

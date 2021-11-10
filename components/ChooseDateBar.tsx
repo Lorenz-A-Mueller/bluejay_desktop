@@ -8,22 +8,17 @@ export default function ChooseDateBar(props: ChooseDateBarProps) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [chooseAllClicked, setChooseAllClicked] = useState(true);
 
-  console.log('NEW DATE: ', new Date().setHours(0, 0, 0, 0));
-  console.log(typeof new Date().setHours(0, 0, 0, 0));
-
-  // set Dates to earliest day -- today
+  console.log('calendarRange: ', calendarRange);
 
   useEffect(() => {
     if (
       'earliestTicketCreationTimestamp' in props.reportData &&
       chooseAllClicked
     ) {
-      setCalendarRange([
-        new Date(props.reportData.earliestTicketCreationTimestamp),
-        new Date(Date.now()),
-      ]);
-      props.setTimeLineStart(props.reportData.earliestTicketCreationTimestamp);
-      props.setTimeLineEnd(new Date().setHours(0, 0, 0, 0));
+      setCalendarRange([new Date(1602453600000), new Date(Date.now())]);
+
+      props.setStartDate(1602453600000);
+      props.setEndDate(new Date().setHours(23, 59, 59, 999));
     }
   }, [props, chooseAllClicked]);
 
@@ -34,14 +29,12 @@ export default function ChooseDateBar(props: ChooseDateBarProps) {
       'earliestTicketCreationTimestamp' in props.reportData &&
       !chooseAllClicked
     ) {
-      props.handleCustomDates(
-        Date.parse(calendarRange[0].toDateString()),
+      props.setStartDate(Date.parse(calendarRange[0].toDateString()));
+      props.setEndDate(Date.parse(calendarRange[1].toDateString()));
+      console.log(
+        'Date.parse(calendarRange[1].toDateString()): ',
         Date.parse(calendarRange[1].toDateString()),
       );
-      props.setTimeLineStart(
-        Number(Date.parse(calendarRange[0].toDateString())),
-      );
-      props.setTimeLineEnd(Number(Date.parse(calendarRange[1].toDateString())));
     }
   }, [props, chooseAllClicked, calendarRange]);
 
@@ -54,7 +47,7 @@ export default function ChooseDateBar(props: ChooseDateBarProps) {
         onClick={() => {
           setChooseAllClicked(true);
           setShowCalendar(false);
-          props.handleChooseAllClick();
+          props.getTicketsInTimeFrame();
         }}
       >
         Choose All

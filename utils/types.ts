@@ -41,11 +41,10 @@ export type MessagePanelHeaderProps = {
 };
 
 export type ChooseDateBarProps = {
-  handleChooseAllClick: () => void;
-  handleCustomDates: (arg0: number, arg1: number) => void;
+  getTicketsInTimeFrame: () => void;
   reportData: ReportData;
-  setTimeLineStart: React.Dispatch<React.SetStateAction<number>>;
-  setTimeLineEnd: React.Dispatch<React.SetStateAction<number>>;
+  setStartDate: React.Dispatch<React.SetStateAction<number>>;
+  setEndDate: React.Dispatch<React.SetStateAction<number>>;
 };
 export type PieChartContainerProps = {
   keyword: string;
@@ -57,10 +56,8 @@ export type PieChartContainerProps = {
 
 export type TicketReportProps = {
   reportData: ReportData;
-  customTimeStart: string;
-  customTimeEnd: string;
-  timeLineStart: number;
-  timeLineEnd: number;
+  startDate: number;
+  endDate: number;
 };
 
 export type ReportData =
