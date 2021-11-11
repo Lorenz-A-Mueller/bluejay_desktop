@@ -34,6 +34,7 @@ export default function Tickets(props: TicketsProps) {
   const [categories, setCategories] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   // fetch all Data necessary for associating id keys with corresponding data in tiles
 
@@ -133,6 +134,7 @@ export default function Tickets(props: TicketsProps) {
     onCompleted: (ongoingTicketData) => {
       console.log(ongoingTicketData);
       getTickets();
+      props.setFilter('');
 
       // router.push('/');
     },
@@ -153,7 +155,10 @@ export default function Tickets(props: TicketsProps) {
     >
       <main css={screenWidth && ticketsStyles(screenWidth)}>
         <div className="top-bar">
-          <SelectCategory />
+          <SelectCategory
+            categories={categories}
+            setSelectedCategory={setSelectedCategory}
+          />
           <SearchBar />
           <button onClick={() => getTickets()}>
             <img src="refresh-icon.jpg" alt="two arrows in form of a circle" />
@@ -171,6 +176,8 @@ export default function Tickets(props: TicketsProps) {
               ? 'Unassigned Tickets'
               : props.filter === 'NEW'
               ? 'New Tickets'
+              : props.filter === 'urgent'
+              ? 'Urgent Tickets'
               : 'Archive'}
           </h1>
           {getAllTicketsQueryData &&
@@ -194,6 +201,7 @@ export default function Tickets(props: TicketsProps) {
                 statuses={statuses}
                 employees={employees}
                 customers={customers}
+                selectedCategory={selectedCategory}
               />
             ))}
         </div>
@@ -206,6 +214,8 @@ export default function Tickets(props: TicketsProps) {
           deleteTicket={deleteTicket}
           closeTicket={closeTicket}
           employee={props.employee}
+          employees={employees}
+          priorities={priorities}
           isAdmin={props.isAdmin}
         />
       )}

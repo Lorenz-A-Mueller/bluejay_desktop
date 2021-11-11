@@ -5,7 +5,7 @@ import { TileProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 export default function Tile(props: TileProps) {
-  const [statusBoxColor, setStatusBoxColor] = useState('#fff8b6');
+  const [statusBoxColor, setStatusBoxColor] = useState('');
   const [createdDatetime, setCreatedDatetime] = useState('');
   const [lastResponseDatetime, setLastResponseDatetime] = useState('');
   const [thisPriorityName, setThisPriorityName] = useState('');
@@ -14,7 +14,10 @@ export default function Tile(props: TileProps) {
   const [thisAssigneeName, setThisAssigneeName] = useState('');
   const [thisCustomerNumber, setThisCustomerNumber] = useState('');
 
-  // get StatusBoxColor according to status and convert timestamps into readable date-times
+  console.log('props.selectedCategory', props.selectedCategory);
+  console.log('props.category', props.category);
+
+  // get StatusBoxColor according to status, convert timestamps into readable date-times and find names of information where ids match
 
   useEffect(() => {
     switch (props.status) {
@@ -34,23 +37,27 @@ export default function Tile(props: TileProps) {
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
 
     setThisPriorityName(
-      props.priorities[Number.parseInt(props.priority, 10) - 1].priority_name,
+      props.priorities.find((priority) => priority.id === props.priority)!
+        .priority_name,
     );
     setThisCategoryName(
-      props.categories[Number.parseInt(props.category, 10) - 1].category_name,
+      props.categories.find((category) => category.id === props.category)!
+        .category_name,
     );
     setThisStatusName(
-      props.statuses[Number.parseInt(props.status, 10) - 1].status_name,
+      props.statuses.find((status) => status.id === props.status)!.status_name,
     );
     if (props.assigneeId) {
       setThisAssigneeName(
-        props.employees[Number.parseInt(props.assigneeId, 10) - 1].first_name,
+        props.employees.find((employee) => employee.id === props.assigneeId)!
+          .first_name,
       );
     } else {
       setThisAssigneeName('not assigned');
     }
     setThisCustomerNumber(
-      props.customers[Number.parseInt(props.customerId, 10) - 1].number,
+      props.customers.find((customer) => customer.id === props.customerId)!
+        .number,
     );
   }, [
     props.status,
@@ -75,14 +82,19 @@ export default function Tile(props: TileProps) {
       onClick={() => props.handleTileClick(props.ticketId)}
       style={{
         display:
-          !props.filter && thisStatusName !== 'CLOSED'
-            ? 'flex'
-            : props.filter === thisStatusName ||
-              (props.filter === 'unassigned' &&
-                !props.assigneeId &&
-                thisStatusName !== 'CLOSED')
-            ? 'flex'
-            : 'none',
+          !props.selectedCategory || props.category === props.selectedCategory // selectedCategory doesn't apply
+            ? //
+              !props.filter && thisStatusName !== 'CLOSED' // then, check for filter
+              ? 'flex'
+              : props.filter === thisStatusName ||
+                props.filter === thisPriorityName ||
+                (props.filter === 'unassigned' &&
+                  !props.assigneeId &&
+                  thisStatusName !== 'CLOSED')
+              ? 'flex'
+              : 'none'
+            : //
+              'none',
       }}
     >
       <div className="rectangular-box">
@@ -112,7 +124,18 @@ export default function Tile(props: TileProps) {
         </div>
         <div className="priority-box">
           <p>priority</p>
-          <p>{thisPriorityName}</p>
+          <p
+            style={
+              thisPriorityName === 'urgent'
+                ? {
+                    color: 'red',
+                    textDecoration: 'solid underline red 4px',
+                  }
+                : {}
+            }
+          >
+            {thisPriorityName}
+          </p>
         </div>
         <div className="created-box">
           <p>created</p>

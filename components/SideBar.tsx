@@ -56,7 +56,26 @@ export default function SideBar(props: SideBarProps) {
           >
             <img src="new-message-icon.jpg" alt="a letter with the number 1" />
           </button>
-          <button>
+          <button
+            onClick={() => {
+              props.setFilter((previous) => {
+                return previous === 'urgent' ? '' : 'urgent';
+              });
+              router.push('/tickets');
+            }}
+            style={
+              'filter' in props && props.filter === 'urgent'
+                ? {
+                    marginLeft: '68px',
+                    borderRadius: '8px',
+                    backgroundColor: '#C4C4C4',
+                    padding: '0 8px 8px 0',
+                    boxSizing: 'content-box',
+                    marginBottom: '-8px',
+                  }
+                : {}
+            }
+          >
             <img
               src="urgent-icon.png"
               alt="a letter with an exclamation mark"

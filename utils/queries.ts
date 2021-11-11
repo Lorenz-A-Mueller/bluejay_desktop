@@ -71,6 +71,7 @@ export const getCustomerNumberQuery = gql`
 export const getCustomerNumbersQuery = gql`
   query {
     customers {
+      id
       number
     }
   }
@@ -213,6 +214,20 @@ export const changeTicketStatusMutation = gql`
     }
   }
 `;
+export const changeTicketPriorityMutation = gql`
+  mutation ($ticketID: ID!, $priorityID: ID!) {
+    changeTicketPriority(id: $ticketID, priority: $priorityID) {
+      priority
+    }
+  }
+`;
+export const changeTicketAssigneeMutation = gql`
+  mutation ($ticketID: ID!, $employeeID: ID!) {
+    changeTicketAssignee(id: $ticketID, assignee_id: $employeeID) {
+      assignee_id
+    }
+  }
+`;
 
 export const getStatusesQuery = gql`
   query {
@@ -286,23 +301,3 @@ export const getMessagePanelInfoQuery = gql`
     }
   }
 `;
-
-// export const getMessagePanelInfoQuery = gql`
-//   query {
-//     status(id: "1") {
-//       status_name
-//     }
-//     customer(search: { id: "1" }) {
-//       number
-//     }
-//     priority(id: "1") {
-//       priority_name
-//     }
-//     category(id: "1") {
-//       category_name
-//     }
-//     employee(search: { id: null }) {
-//       first_name
-//     }
-//   }
-// `;

@@ -26,6 +26,15 @@ export default function MessagePanel(props: MessagePanelProps) {
     fetchPolicy: 'network-only',
   });
 
+  const [getTicketInformation] = useLazyQuery(getTicketInformationQuery, {
+    variables: { ticketId: props.openedTicket },
+    onCompleted: () => {
+      setTicketData(data.ticket);
+      getMessages();
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const [getMessages] = useLazyQuery(getMessagesQuery, {
     variables: { ticketID: props.openedTicket },
     onCompleted: (getMessagesData) => {
@@ -57,6 +66,9 @@ export default function MessagePanel(props: MessagePanelProps) {
         <MessagePanelHeader
           ticket={data && data.ticket}
           isAdmin={props.isAdmin}
+          employees={props.employees}
+          priorities={props.priorities}
+          getTicketInformation={getTicketInformation}
         />
         <div className="title-bar">
           <p>{data && data.ticket.title}</p>

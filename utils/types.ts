@@ -30,9 +30,11 @@ export type TileProps = {
   categories: Category[];
   employees: Employee[];
   customers: Customer[];
+  selectedCategory: Category;
 };
 
 export type Customer = {
+  id: string;
   number: string;
 };
 
@@ -41,18 +43,24 @@ export type Priority = {
   priority_name: string;
 };
 
-export type MessagePanelHeaderProps = {
-  ticket:
-    | {
-        status: string;
-        priority: string;
-        category: string;
-        assignee_id: string;
-        ticket_number: string;
-        customer_id: string;
-      }
-    | undefined;
+export type MessagePanelProps = {
+  openedTicket: string;
+  employee: Employee;
+  setShowMessagePanel: (arg: boolean) => void;
+  closeTicket: () => void;
+  deleteTicket: () => void;
+  setOngoingTicket: () => void;
   isAdmin: boolean;
+  employees: Employee[];
+  priorities: Priority[];
+};
+
+export type MessagePanelHeaderProps = {
+  ticket: Ticket;
+  isAdmin: boolean;
+  employees: Employee[];
+  priorities: Priority[];
+  getTicketInformation: () => void;
 };
 
 export type ChooseDateBarProps = {
@@ -134,16 +142,6 @@ export type DataProps = {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export type MessagePanelProps = {
-  openedTicket: string;
-  employee: Employee;
-  setShowMessagePanel: (arg: boolean) => void;
-  closeTicket: () => void;
-  deleteTicket: () => void;
-  setOngoingTicket: () => void;
-  isAdmin: boolean;
-};
-
 export type Message = {
   id: string;
   content: string;
@@ -159,4 +157,9 @@ export type MessageFieldProps = {
       }
     | undefined;
   employee: Employee;
+};
+
+export type SelectCategoryProps = {
+  categories: Category[];
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
 };

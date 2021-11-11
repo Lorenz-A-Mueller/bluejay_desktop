@@ -260,27 +260,52 @@ export const selectCategoryStyles = (screenWidth: number) => css`
   background-color: white;
   margin-left: ${scale[11]}px;
   display: flex;
-  align-items: center;
-
+  flex-direction: column;
   > div {
-    width: ${scale[10]}px;
+    width: 100%;
     height: ${scale[10]}px;
-    background-color: ${middleGray};
     display: flex;
-    justify-content: center;
     align-items: center;
-    .triangle {
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: ${scale[8]}px ${scale[9] / 2}px 0 ${scale[9] / 2}px;
-      border-color: #000000 transparent transparent transparent;
+    flex-shrink: 0;
+    .triangle-container {
+      width: ${scale[10]}px;
+      height: ${scale[10]}px;
+      background-color: ${middleGray};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .triangle {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: ${scale[8]}px ${scale[9] / 2}px 0 ${scale[9] / 2}px;
+        border-color: #000000 transparent transparent transparent;
+      }
+    }
+    p {
+      font-size: ${scale[7]};
+      font-weight: bold;
+      margin-left: ${scale[6]}px;
     }
   }
-  p {
-    font-size: ${scale[7]};
-    font-weight: bold;
-    margin-left: ${scale[6]}px;
+  .dropdown-container {
+    position: relative;
+    bottom: 0;
+    background-color: pink;
+    /* height: 200px; */
+    width: calc(100% - ${scale[10]}px);
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
+    > button {
+      margin-left: ${scale[6]}px;
+      color: black;
+      font-weight: bold;
+      font-size: ${scale[7]}px;
+      flex-shrink: 0;
+    }
   }
 `;
 
@@ -670,10 +695,15 @@ export const messagePanelHeaderStyles = css`
       flex-direction: row;
       align-items: flex-start;
 
-      img {
+      button {
+        background-color: transparent;
         width: ${scale[9]}px;
         margin-left: auto;
         margin-right: ${scale[7]}px;
+        flex-shrink: 0;
+        img {
+          width: 100%;
+        }
       }
       p {
         margin-top: ${scale[4]}px;
@@ -701,11 +731,17 @@ export const messagePanelHeaderStyles = css`
       flex-direction: row;
       align-items: flex-start;
 
-      img {
+      button {
+        background-color: transparent;
+        flex-shrink: 0;
         width: ${scale[9]}px;
         margin-left: auto;
-        margin-right: ${scale[10]}px;
+        margin-right: ${scale[7]}px;
+        img {
+          width: 100%;
+        }
       }
+
       p {
         margin-top: ${scale[4]}px;
       }
