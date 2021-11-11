@@ -28,7 +28,6 @@ export default function MessageField(props: MessageFieldProps) {
     }
   }, [props.message, getCustomerName]);
 
-  console.log('props in Messagefield', props);
   return (
     <div
       css={messageFieldStyles}

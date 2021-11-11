@@ -11,6 +11,7 @@ import {
   employeeDataFetch,
   employeeSessionFetch,
   getTicketsInTimeFrameQuery,
+  roleNameFetch,
 } from '../utils/queries';
 import { dataStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime2 } from '../utils/transformTimestampIntoDatetime';
@@ -26,7 +27,6 @@ export default function Data(props: DataProps) {
   const [endDate, setEndDate] = useState(Date.parse(new Date().toDateString()));
 
   const [logOut] = useMutation(deleteSessionMutation, {
-    variables: { employee_id: props.employeeId },
     onCompleted: () => {
       router.push('/');
     },
@@ -63,7 +63,12 @@ export default function Data(props: DataProps) {
   }, [startDate, endDate, getTicketsInTimeFrame]);
 
   return (
-    <SideBar setFilter={props.setFilter} filter={props.filter}>
+    <SideBar
+      setFilter={props.setFilter}
+      filter={props.filter}
+      employee={props.employee}
+      idAdmin={props.isAdmin}
+    >
       <main css={screenWidth && dataStyles(screenWidth)}>
         <div className="top-bar">
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
@@ -93,27 +98,42 @@ export default function Data(props: DataProps) {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
+  // check whether sessionToken in cookies matches an existing valid token in db
+
   const sessionToken = context.req.cookies.employeeSessionToken;
   const apiUrl = 'http://localhost:4000/graphql';
-  const res = await employeeSessionFetch(sessionToken, apiUrl);
-  const data = await res.json();
-  if (!data.data.employeeSession) {
+  const employeeSessionFetchRes = await employeeSessionFetch(
+    sessionToken,
+    apiUrl,
+  );
+  const employeeSessionFetchData = await employeeSessionFetchRes.json();
+  if (!employeeSessionFetchData.data.employeeSession) {
     return {
       redirect: {
-        destination: '/?returnTo=/data',
+        destination: '/?returnTo=/tickets',
         permanent: false,
       },
     };
   }
 
-  const employeeId = data.data.employeeSession.employee_id;
-  const res2 = await employeeDataFetch(employeeId, apiUrl);
-  const data2 = await res2.json();
+  // only if sessions exists in db: fetch data of employee with that session
+
+  const employeeId = employeeSessionFetchData.data.employeeSession.employee_id;
+  const employeeDataFetchRes = await employeeDataFetch(employeeId, apiUrl);
+  const employeeDataFetchData = await employeeDataFetchRes.json();
+
+  // after that, fetch the name of that employee's role
+
+  const roleNameFetchRes = await roleNameFetch(
+    employeeDataFetchData.data.employee.role,
+    apiUrl,
+  );
+  const roleNameFetchData = await roleNameFetchRes.json();
 
   return {
     props: {
-      employee: data2.data.employee,
-      employeeId,
+      employee: employeeDataFetchData.data.employee,
+      isAdmin: roleNameFetchData.data.role.role_name === 'admin',
     },
   };
 };

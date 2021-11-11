@@ -2,6 +2,7 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
+// import { initializeApollo } from '../apollo/client'; TODO?
 import MessagePanel from '../components/MessagePanel';
 import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
@@ -19,6 +20,7 @@ import {
   getEmployeesQuery,
   getPrioritiesQuery,
   getStatusesQuery,
+  roleNameFetch,
 } from '../utils/queries';
 import { ticketsStyles } from '../utils/styles';
 import { Ticket, TicketsProps } from '../utils/types';
@@ -67,7 +69,6 @@ export default function Tickets(props: TicketsProps) {
     getCustomerNumbersQuery,
     {
       onCompleted: () => {
-        alert('yes');
         setCustomers(getCustomerNumbersQueryData.customers);
       },
       fetchPolicy: 'network-only',
@@ -78,6 +79,8 @@ export default function Tickets(props: TicketsProps) {
 
   const screenWidth = useWindowDimensions().width;
   const router = useRouter();
+
+  // get all tickets
 
   const [getTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
     getAllTicketsQuery,
@@ -142,7 +145,12 @@ export default function Tickets(props: TicketsProps) {
   };
 
   return (
-    <Sidebar setFilter={props.setFilter} filter={props.filter}>
+    <Sidebar
+      setFilter={props.setFilter}
+      filter={props.filter}
+      employee={props.employee}
+      isAdmin={props.isAdmin}
+    >
       <main css={screenWidth && ticketsStyles(screenWidth)}>
         <div className="top-bar">
           <SelectCategory />
@@ -193,12 +201,12 @@ export default function Tickets(props: TicketsProps) {
       {showMessagePanel && (
         <MessagePanel
           openedTicket={openedTicket}
-          employeeId={props.employeeId}
           setShowMessagePanel={setShowMessagePanel}
           setOngoingTicket={setOngoingTicket}
           deleteTicket={deleteTicket}
           closeTicket={closeTicket}
           employee={props.employee}
+          isAdmin={props.isAdmin}
         />
       )}
     </Sidebar>
@@ -208,11 +216,16 @@ export default function Tickets(props: TicketsProps) {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
+  // check whether sessionToken in cookies matches an existing valid token in db
+
   const sessionToken = context.req.cookies.employeeSessionToken;
   const apiUrl = 'http://localhost:4000/graphql';
-  const res = await employeeSessionFetch(sessionToken, apiUrl);
-  const data = await res.json();
-  if (!data.data.employeeSession) {
+  const employeeSessionFetchRes = await employeeSessionFetch(
+    sessionToken,
+    apiUrl,
+  );
+  const employeeSessionFetchData = await employeeSessionFetchRes.json();
+  if (!employeeSessionFetchData.data.employeeSession) {
     return {
       redirect: {
         destination: '/?returnTo=/tickets',
@@ -220,14 +233,25 @@ export const getServerSideProps = async (
       },
     };
   }
-  const employeeId = data.data.employeeSession.employee_id;
-  const res2 = await employeeDataFetch(employeeId, apiUrl);
-  const data2 = await res2.json();
+
+  // only if sessions exists in db: fetch data of employee with that session
+
+  const employeeId = employeeSessionFetchData.data.employeeSession.employee_id;
+  const employeeDataFetchRes = await employeeDataFetch(employeeId, apiUrl);
+  const employeeDataFetchData = await employeeDataFetchRes.json();
+
+  // after that, fetch the name of that employee's role
+
+  const roleNameFetchRes = await roleNameFetch(
+    employeeDataFetchData.data.employee.role,
+    apiUrl,
+  );
+  const roleNameFetchData = await roleNameFetchRes.json();
 
   return {
     props: {
-      employee: data2.data.employee,
-      employeeId,
+      employee: employeeDataFetchData.data.employee,
+      isAdmin: roleNameFetchData.data.role.role_name === 'admin',
     },
   };
 };

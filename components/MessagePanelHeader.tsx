@@ -1,50 +1,19 @@
 import { useLazyQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import {
-  getCategoryQuery,
-  getMessagePanelInfoQuery,
-  getStatusQuery,
-} from '../utils/queries';
+import { getMessagePanelInfoQuery } from '../utils/queries';
 import { messagePanelHeaderStyles } from '../utils/styles';
 import { MessagePanelHeaderProps } from '../utils/types';
 
 export default function MessagePanelHeader(props: MessagePanelHeaderProps) {
   const [statusBoxColor, setStatusBoxColor] = useState('#FFF8B6');
-
   const [getMessagePanelInfo, { data: getMessagePanelInfoQueryData }] =
     useLazyQuery(getMessagePanelInfoQuery, {
-      variables: {
-        statusID: props.ticket?.status,
-        customerID: props.ticket?.customer_id,
-        priorityID: props.ticket?.priority,
-        categoryID: props.ticket?.category,
-        assigneeID: props.ticket?.assignee_id,
-      },
-      onCompleted: () => {
-        console.log(
-          'getMessagePanelInfoQueryData: ',
-          getMessagePanelInfoQueryData,
-        );
-      },
+      onCompleted: () => {},
+      onError: () => {},
+      fetchPolicy: 'network-only',
     });
 
-  const [getStatus, { data: getStatusQueryData }] = useLazyQuery(
-    getStatusQuery,
-    {
-      variables: { statusID: props.ticket?.status },
-      onCompleted: () => {},
-      fetchPolicy: 'network-only',
-    },
-  );
-
-  const [getCategory, { data: getCategoryQueryData }] = useLazyQuery(
-    getCategoryQuery,
-    {
-      variables: { categoryID: props.ticket?.category },
-      onCompleted: () => {},
-      fetchPolicy: 'network-only',
-    },
-  );
+  // useEffect(() => {}, [getMessagePanelInfo]);
 
   useEffect(() => {
     if (props.ticket) {
@@ -61,11 +30,20 @@ export default function MessagePanelHeader(props: MessagePanelHeaderProps) {
         default:
           setStatusBoxColor('#FFF8B6');
       }
-      getStatus();
-      getCategory();
+      // include variables here to prevent firing of useLazyQuery when props.ticket is undefined
+      getMessagePanelInfo({
+        variables: {
+          statusID: props.ticket.status,
+          customerID: props.ticket.customer_id,
+          priorityID: props.ticket.priority,
+          categoryID: props.ticket.category,
+          assigneeID: props.ticket.assignee_id
+            ? props.ticket.assignee_id
+            : null,
+        },
+      });
     }
-    getMessagePanelInfo();
-  }, [props.ticket, getStatus, getCategory, getMessagePanelInfo]);
+  }, [props.ticket, getMessagePanelInfo]);
 
   return (
     <div css={messagePanelHeaderStyles}>
@@ -73,7 +51,10 @@ export default function MessagePanelHeader(props: MessagePanelHeaderProps) {
         style={{ backgroundColor: statusBoxColor }}
         className="status-square"
       >
-        <p>{getStatusQueryData && getStatusQueryData.status.status_name}</p>
+        <p>
+          {getMessagePanelInfoQueryData &&
+            getMessagePanelInfoQueryData.status.status_name}
+        </p>
         <p>{props.ticket && props.ticket.ticket_number}</p>
       </div>
       <div className="customer-id-square">
@@ -85,27 +66,44 @@ export default function MessagePanelHeader(props: MessagePanelHeaderProps) {
       </div>
       <div className="priority-square">
         <p>priority</p>
-        <p>
-          {' '}
-          {getMessagePanelInfoQueryData &&
-            getMessagePanelInfoQueryData.priority.priority_name}
-        </p>
+        <div>
+          <p>
+            {getMessagePanelInfoQueryData &&
+              getMessagePanelInfoQueryData.priority.priority_name}
+          </p>
+          {props.isAdmin && (
+            <img
+              src="edit-icon.png"
+              alt="a stylized pencil and sheet of paper"
+            />
+          )}
+        </div>
       </div>
       <div className="category-square">
         <p>category</p>
         <p>
-          {getCategoryQueryData && getCategoryQueryData.category.category_name}
+          {getMessagePanelInfoQueryData &&
+            getMessagePanelInfoQueryData.category.category_name}
         </p>
       </div>
       <div className="assigned-square">
         <p>assigned</p>
-        <p>
-          {props.ticket &&
-            (getMessagePanelInfoQueryData &&
-            getMessagePanelInfoQueryData.employee.first_name
-              ? getMessagePanelInfoQueryData.employee.first_name
-              : 'not assigned')}
-        </p>
+        <div>
+          <p>
+            {props.ticket &&
+              (getMessagePanelInfoQueryData &&
+              getMessagePanelInfoQueryData.employee &&
+              getMessagePanelInfoQueryData.employee.first_name
+                ? getMessagePanelInfoQueryData.employee.first_name
+                : 'not assigned')}
+          </p>
+          {props.isAdmin && (
+            <img
+              src="edit-icon.png"
+              alt="a stylized pencil and sheet of paper"
+            />
+          )}
+        </div>
       </div>
     </div>
   );

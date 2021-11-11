@@ -662,9 +662,21 @@ export const messagePanelHeaderStyles = css`
   .priority-square {
     width: 20%;
     height: 100%;
-    p {
-      &:first-of-type {
-        font-size: ${scale[6]}px;
+    > p {
+      font-size: ${scale[6]}px;
+    }
+    > div {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+
+      img {
+        width: ${scale[9]}px;
+        margin-left: auto;
+        margin-right: ${scale[7]}px;
+      }
+      p {
+        margin-top: ${scale[4]}px;
       }
     }
   }
@@ -681,9 +693,21 @@ export const messagePanelHeaderStyles = css`
     height: 100%;
     flex: 1; // takes all available space
     border: 0;
-    p {
-      &:first-of-type {
-        font-size: ${scale[6]}px;
+    > p {
+      font-size: ${scale[6]}px;
+    }
+    > div {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+
+      img {
+        width: ${scale[9]}px;
+        margin-left: auto;
+        margin-right: ${scale[10]}px;
+      }
+      p {
+        margin-top: ${scale[4]}px;
       }
     }
   }

@@ -107,11 +107,8 @@ export default async function extractTicketReportData(
 
   //
 
-  console.log('tickets', tickets);
-
   const byDayArray = new Array(numberOfDays + 1).fill(0);
   tickets.forEach((ticket) => {
-    console.log('ticket', ticket);
     const passedDaysSinceEarliestDate =
       calculateNumberOfDays(startTimestamp, Number(ticket.created)) - 1;
 

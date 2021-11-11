@@ -8,8 +8,6 @@ export default function ChooseDateBar(props: ChooseDateBarProps) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [chooseAllClicked, setChooseAllClicked] = useState(true);
 
-  console.log('calendarRange: ', calendarRange);
-
   useEffect(() => {
     if (
       'earliestTicketCreationTimestamp' in props.reportData &&
@@ -31,10 +29,6 @@ export default function ChooseDateBar(props: ChooseDateBarProps) {
     ) {
       props.setStartDate(Date.parse(calendarRange[0].toDateString()));
       props.setEndDate(Date.parse(calendarRange[1].toDateString()));
-      console.log(
-        'Date.parse(calendarRange[1].toDateString()): ',
-        Date.parse(calendarRange[1].toDateString()),
-      );
     }
   }, [props, chooseAllClicked, calendarRange]);
 

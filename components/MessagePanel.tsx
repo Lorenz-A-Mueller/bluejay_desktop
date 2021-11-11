@@ -38,7 +38,7 @@ export default function MessagePanel(props: MessagePanelProps) {
     variables: {
       ticketID: 'id' in ticketData && ticketData.id,
       content: newMessageText,
-      responderID: props.employeeId,
+      responderID: props.employee.id,
     },
     onCompleted: () => {
       getMessages();
@@ -54,7 +54,10 @@ export default function MessagePanel(props: MessagePanelProps) {
         <img src="x-icon.jpg" alt="an 'x'" />
       </button>
       <div className="blue-square">
-        <MessagePanelHeader ticket={data && data.ticket} />
+        <MessagePanelHeader
+          ticket={data && data.ticket}
+          isAdmin={props.isAdmin}
+        />
         <div className="title-bar">
           <p>{data && data.ticket.title}</p>
         </div>

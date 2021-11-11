@@ -29,6 +29,22 @@ export const employeeDataFetch = async (employeeId: string, apiUrl: string) => {
         employee(search: {id: ${employeeId}}) {
           id
           first_name
+          role
+        }
+      }`,
+    }),
+  });
+  return data;
+};
+
+export const roleNameFetch = async (id: string, apiUrl: string) => {
+  const data = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `query {
+        role(id: ${id}){
+          role_name
         }
       }`,
     }),
@@ -243,13 +259,15 @@ export const getPrioritiesQuery = gql`
   }
 `;
 
+// assigneeID is optional
+
 export const getMessagePanelInfoQuery = gql`
   query (
     $statusID: ID!
     $customerID: ID!
     $priorityID: ID!
     $categoryID: ID!
-    $assigneeID: ID!
+    $assigneeID: ID
   ) {
     status(id: $statusID) {
       status_name
@@ -268,3 +286,23 @@ export const getMessagePanelInfoQuery = gql`
     }
   }
 `;
+
+// export const getMessagePanelInfoQuery = gql`
+//   query {
+//     status(id: "1") {
+//       status_name
+//     }
+//     customer(search: { id: "1" }) {
+//       number
+//     }
+//     priority(id: "1") {
+//       priority_name
+//     }
+//     category(id: "1") {
+//       category_name
+//     }
+//     employee(search: { id: null }) {
+//       first_name
+//     }
+//   }
+// `;

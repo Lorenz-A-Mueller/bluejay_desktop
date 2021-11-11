@@ -52,6 +52,7 @@ export type MessagePanelHeaderProps = {
         customer_id: string;
       }
     | undefined;
+  isAdmin: boolean;
 };
 
 export type ChooseDateBarProps = {
@@ -98,6 +99,7 @@ export type Status = {
 export type Employee = {
   id: string;
   first_name: string;
+  role: number;
 };
 
 export type Category = {
@@ -105,40 +107,41 @@ export type Category = {
   category_name: string;
 };
 
+export type Role = {
+  id: string;
+  role_name: string;
+};
+
 export type SideBarProps = {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   filter: string;
+  employee: Employee;
+  isAdmin: boolean;
   children: React.ReactNode;
 };
 
 export type TicketsProps = {
-  employee: {
-    first_name: string;
-  };
-  employeeId: string;
+  employee: Employee;
   filter: string;
+  isAdmin: boolean;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export type DataProps = {
-  employee: {
-    first_name: string;
-  };
-  employeeId: string;
+  employee: Employee;
   filter: string;
+  isAdmin: boolean;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export type MessagePanelProps = {
   openedTicket: string;
-  employee: {
-    first_name: string;
-  };
-  employeeId: string | undefined;
+  employee: Employee;
   setShowMessagePanel: (arg: boolean) => void;
   closeTicket: () => void;
   deleteTicket: () => void;
   setOngoingTicket: () => void;
+  isAdmin: boolean;
 };
 
 export type Message = {
@@ -155,7 +158,5 @@ export type MessageFieldProps = {
         customer_id?: string;
       }
     | undefined;
-  employee: {
-    first_name: string;
-  };
+  employee: Employee;
 };

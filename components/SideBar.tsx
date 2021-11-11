@@ -1,4 +1,5 @@
 import { useRouter } from 'next/dist/client/router';
+import { employeeDataFetch } from '../utils/queries';
 import { sideBarStyles } from '../utils/styles';
 import { SideBarProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
@@ -118,7 +119,9 @@ export default function SideBar(props: SideBarProps) {
         >
           <img src="data-icon.png" alt="a graph icon" />
         </button>
-        <img src="employees-icon.png" alt="an employees icon" />
+        {'employee' in props && 'isAdmin' in props && props.isAdmin && (
+          <img src="employees-icon.png" alt="an employees icon" />
+        )}
         <img src="settings-icon.png" alt="a settings icon" />
       </div>
       {props.children}
