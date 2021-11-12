@@ -5,6 +5,10 @@ module.exports = {
 };
 
 module.exports = withPWA({
+  i18n: {
+    locales: ['en'],
+    defaultLocale: 'en',
+  },
   pwa: {
     dest: 'public',
     register: true,

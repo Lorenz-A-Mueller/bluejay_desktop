@@ -30,7 +30,7 @@ export type TileProps = {
   categories: Category[];
   employees: Employee[];
   customers: Customer[];
-  selectedCategory: Category;
+  selectedCategory: String;
 };
 
 export type Customer = {
@@ -161,5 +161,11 @@ export type MessageFieldProps = {
 
 export type SelectCategoryProps = {
   categories: Category[];
+  selectedCategory: string;
   setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export type SearchBarProps = {
+  setSearchBarInput: React.Dispatch<React.SetStateAction<string>>;
+  searchBarInput: string;
 };

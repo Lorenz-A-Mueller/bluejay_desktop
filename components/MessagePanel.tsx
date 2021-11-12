@@ -14,6 +14,7 @@ export default function MessagePanel(props: MessagePanelProps) {
   const [ticketData, setTicketData] = useState<Ticket | {}>({});
   const [messages, setMessages] = useState([]);
   const [newMessageText, setNewMessageText] = useState('');
+  const [refreshIconAngle, setRefreshIconAngle] = useState(0);
 
   // query data about clicked-on ticket
 
@@ -73,7 +74,7 @@ export default function MessagePanel(props: MessagePanelProps) {
         <div className="title-bar">
           <p>{data && data.ticket.title}</p>
         </div>
-        {messages.length &&
+        {messages.length > 0 &&
           messages.map((message: Message) => (
             <MessageField
               key={`message-key-${message.content}`}
@@ -85,10 +86,20 @@ export default function MessagePanel(props: MessagePanelProps) {
 
         <div className="reply-container">
           <div className="reply-header">
-            <button onClick={() => getMessages()} className="refresh-button">
+            <button
+              onClick={() => {
+                getMessages();
+                setRefreshIconAngle(refreshIconAngle + 360);
+              }}
+              className="refresh-button"
+            >
               <img
                 src="refresh-icon.jpg"
                 alt="Two arrows in form of a circle"
+                style={{
+                  transform: `rotate(${refreshIconAngle}deg)`,
+                  transition: 'transform 1s',
+                }}
               />
             </button>
             {data && data.ticket.status !== '3' && (

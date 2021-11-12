@@ -67,7 +67,7 @@ export default function Data(props: DataProps) {
       setFilter={props.setFilter}
       filter={props.filter}
       employee={props.employee}
-      idAdmin={props.isAdmin}
+      isAdmin={props.isAdmin}
     >
       <main css={screenWidth && dataStyles(screenWidth)}>
         <div className="top-bar">

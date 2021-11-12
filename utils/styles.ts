@@ -254,7 +254,7 @@ export const ticketsStyles = (screenWidth: number) => css`
 
 export const selectCategoryStyles = (screenWidth: number) => css`
   width: ${(scale[24] * screenWidth) / 1440}px;
-  min-width: ${scale[18]}px;
+  min-width: ${scale[23]}px;
 
   height: ${scale[10]}px;
   background-color: white;
@@ -287,12 +287,19 @@ export const selectCategoryStyles = (screenWidth: number) => css`
       font-weight: bold;
       margin-left: ${scale[6]}px;
     }
+    .reset-icon {
+      margin-left: auto;
+      margin-right: ${scale[5]}px;
+      width: ${scale[12]}px;
+      height: ${scale[10]}px;
+      background: url('reset-icon.png') center center no-repeat;
+      background-size: contain;
+    }
   }
   .dropdown-container {
     position: relative;
     bottom: 0;
-    background-color: pink;
-    /* height: 200px; */
+    background-color: white;
     width: calc(100% - ${scale[10]}px);
     margin-left: auto;
     display: flex;
@@ -305,6 +312,11 @@ export const selectCategoryStyles = (screenWidth: number) => css`
       font-weight: bold;
       font-size: ${scale[7]}px;
       flex-shrink: 0;
+      width: 100%;
+      text-align: start;
+      &:first-of-type {
+        margin-top: ${scale[6]}px;
+      }
     }
   }
 `;

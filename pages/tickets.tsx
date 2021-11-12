@@ -23,18 +23,20 @@ import {
   roleNameFetch,
 } from '../utils/queries';
 import { ticketsStyles } from '../utils/styles';
-import { Ticket, TicketsProps } from '../utils/types';
+import { Priority, Status, Ticket, TicketsProps } from '../utils/types';
 import useWindowDimensions from '../utils/useWindowDimensions';
 
 export default function Tickets(props: TicketsProps) {
   const [showMessagePanel, setShowMessagePanel] = useState(false);
   const [openedTicket, setOpenedTicket] = useState('');
-  const [priorities, setPriorities] = useState([]);
-  const [statuses, setStatuses] = useState([]);
+  const [priorities, setPriorities] = useState<Priority[]>([]);
+  const [statuses, setStatuses] = useState<Status[]>([]);
   const [categories, setCategories] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchBarInput, setSearchBarInput] = useState('');
+  const [refreshIconAngle, setRefreshIconAngle] = useState(0);
 
   // fetch all Data necessary for associating id keys with corresponding data in tiles
 
@@ -86,12 +88,19 @@ export default function Tickets(props: TicketsProps) {
   const [getTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
     getAllTicketsQuery,
     {
+      // fetchPolicy: 'cache-and-network', // maybe
       fetchPolicy: 'network-only',
     },
   ); // TODO error-handling / loading-handling
 
+  // refresh every minute automatically
+
   useEffect(() => {
     getTickets();
+    const getTicketsPeriodically = setInterval(() => {
+      getTickets();
+    }, 1000 * 60);
+    return () => clearInterval(getTicketsPeriodically);
   }, [getTickets]);
 
   const [deleteSession] = useMutation(deleteSessionMutation, {
@@ -157,10 +166,23 @@ export default function Tickets(props: TicketsProps) {
         <div className="top-bar">
           <SelectCategory
             categories={categories}
+            selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
           />
-          <SearchBar />
-          <button onClick={() => getTickets()}>
+          <SearchBar
+            setSearchBarInput={setSearchBarInput}
+            searchBarInput={searchBarInput}
+          />
+          <button
+            onClick={() => {
+              getTickets();
+              setRefreshIconAngle(refreshIconAngle + 360);
+            }}
+            style={{
+              transform: `rotate(${refreshIconAngle}deg)`,
+              transition: 'transform 1s',
+            }}
+          >
             <img src="refresh-icon.jpg" alt="two arrows in form of a circle" />
           </button>
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
@@ -181,29 +203,91 @@ export default function Tickets(props: TicketsProps) {
               : 'Archive'}
           </h1>
           {getAllTicketsQueryData &&
-            getAllTicketsQueryData.tickets.map((ticket: Ticket) => (
-              <Tile
-                key={`tile-key-${ticket.created}`}
-                ticketId={ticket.id}
-                status={ticket.status}
-                ticketNumber={ticket.ticket_number}
-                title={ticket.title}
-                created={ticket.created}
-                lastResponse={ticket.last_response}
-                category={ticket.category}
-                priority={ticket.priority}
-                assigneeId={ticket.assignee_id}
-                customerId={ticket.customer_id}
-                handleTileClick={handleTileClick}
-                filter={props.filter}
-                priorities={priorities}
-                categories={categories}
-                statuses={statuses}
-                employees={employees}
-                customers={customers}
-                selectedCategory={selectedCategory}
-              />
-            ))}
+            getAllTicketsQueryData.tickets.map((ticket: Ticket) => {
+              //
+              // FILTERS (RENDERING OF A TICKET-TILE) *********
+
+              // don't render if title (lower-cased)  or ticket_number (with or without '#') starts with searchBarInput (lower-cased)
+
+              if (
+                searchBarInput &&
+                !ticket.title
+                  .toLowerCase()
+                  .startsWith(searchBarInput.toLowerCase()) &&
+                !ticket.ticket_number.startsWith(searchBarInput) &&
+                !ticket.ticket_number.slice(1).startsWith(searchBarInput)
+              ) {
+                return <div />;
+              }
+
+              // don't render if a set selectedCategory does not match ticket.category
+
+              if (selectedCategory && ticket.category !== selectedCategory) {
+                return <div />;
+
+                // don't render if there is no filter but ticket.status = closed (=> show pending tickets)
+              } else if (
+                !props.filter &&
+                statuses.find((status) => status.id === ticket.status)
+                  ?.status_name === 'CLOSED'
+              ) {
+                return <div />;
+
+                // dont' render if there is a filter of "NEW" or "CLOSED" and that does not correspond to ticket.status
+              } else if (
+                (props.filter === 'NEW' || props.filter === 'CLOSED') &&
+                statuses.find((status) => status.status_name === props.filter)!
+                  .id !== ticket.status
+              ) {
+                return <div />;
+
+                // dont' render if there is a filter of "urgent"  AND that does not correspond to ticket.priority or status of ticket is "closed".
+              } else if (
+                props.filter === 'urgent' &&
+                (priorities.find(
+                  (priority) => priority.priority_name === props.filter,
+                )!.id !== ticket.priority ||
+                  statuses.find((status) => status.id === ticket.status)
+                    ?.status_name === 'CLOSED')
+              ) {
+                return <div />;
+
+                // dont' render if there is a filter of "unassigned" AND ticket.assigneeId exists or status of ticket is "closed".
+              } else if (
+                props.filter === 'unassigned' &&
+                (ticket.assignee_id ||
+                  statuses.find((status) => status.id === ticket.status)
+                    ?.status_name === 'CLOSED')
+              ) {
+                return <div />;
+
+                // ***************
+              } else {
+                return (
+                  <Tile
+                    key={`tile-key-${ticket.created}`}
+                    ticketId={ticket.id}
+                    status={ticket.status}
+                    ticketNumber={ticket.ticket_number}
+                    title={ticket.title}
+                    created={ticket.created}
+                    lastResponse={ticket.last_response}
+                    category={ticket.category}
+                    priority={ticket.priority}
+                    assigneeId={ticket.assignee_id}
+                    customerId={ticket.customer_id}
+                    handleTileClick={handleTileClick}
+                    filter={props.filter}
+                    priorities={priorities}
+                    categories={categories}
+                    statuses={statuses}
+                    employees={employees}
+                    customers={customers}
+                    selectedCategory={selectedCategory}
+                  />
+                );
+              }
+            })}
         </div>
       </main>
       {showMessagePanel && (

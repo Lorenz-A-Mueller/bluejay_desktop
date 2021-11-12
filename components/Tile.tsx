@@ -36,29 +36,32 @@ export default function Tile(props: TileProps) {
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
 
-    setThisPriorityName(
-      props.priorities.find((priority) => priority.id === props.priority)!
-        .priority_name,
-    );
-    setThisCategoryName(
-      props.categories.find((category) => category.id === props.category)!
-        .category_name,
-    );
-    setThisStatusName(
-      props.statuses.find((status) => status.id === props.status)!.status_name,
-    );
-    if (props.assigneeId) {
-      setThisAssigneeName(
-        props.employees.find((employee) => employee.id === props.assigneeId)!
-          .first_name,
+    if (props.categories.length) {
+      setThisPriorityName(
+        props.priorities.find((priority) => priority.id === props.priority)!
+          .priority_name,
       );
-    } else {
-      setThisAssigneeName('not assigned');
+      setThisCategoryName(
+        props.categories.find((category) => category.id === props.category)!
+          .category_name,
+      );
+      setThisStatusName(
+        props.statuses.find((status) => status.id === props.status)!
+          .status_name,
+      );
+      if (props.assigneeId) {
+        setThisAssigneeName(
+          props.employees.find((employee) => employee.id === props.assigneeId)!
+            .first_name,
+        );
+      } else {
+        setThisAssigneeName('not assigned');
+      }
+      setThisCustomerNumber(
+        props.customers.find((customer) => customer.id === props.customerId)!
+          .number,
+      );
     }
-    setThisCustomerNumber(
-      props.customers.find((customer) => customer.id === props.customerId)!
-        .number,
-    );
   }, [
     props.status,
     props.created,
@@ -80,22 +83,22 @@ export default function Tile(props: TileProps) {
     <button
       css={screenWidth && tileStyles(screenWidth)}
       onClick={() => props.handleTileClick(props.ticketId)}
-      style={{
-        display:
-          !props.selectedCategory || props.category === props.selectedCategory // selectedCategory doesn't apply
-            ? //
-              !props.filter && thisStatusName !== 'CLOSED' // then, check for filter
-              ? 'flex'
-              : props.filter === thisStatusName ||
-                props.filter === thisPriorityName ||
-                (props.filter === 'unassigned' &&
-                  !props.assigneeId &&
-                  thisStatusName !== 'CLOSED')
-              ? 'flex'
-              : 'none'
-            : //
-              'none',
-      }}
+      // style={{
+      //   display:
+      //     !props.selectedCategory || props.category === props.selectedCategory // selectedCategory doesn't apply
+      //       ? //
+      //         !props.filter && thisStatusName !== 'CLOSED' // then, check for filter
+      //         ? 'flex'
+      //         : props.filter === thisStatusName ||
+      //           props.filter === thisPriorityName ||
+      //           (props.filter === 'unassigned' &&
+      //             !props.assigneeId &&
+      //             thisStatusName !== 'CLOSED')
+      //         ? 'flex'
+      //         : 'none'
+      //       : //
+      //         'none',
+      // }}
     >
       <div className="rectangular-box">
         <div className="status-box" style={{ backgroundColor: statusBoxColor }}>
