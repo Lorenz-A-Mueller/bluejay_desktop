@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { tileStyles } from '../utils/styles';
 import { transformTimestampIntoDatetime } from '../utils/transformTimestampIntoDatetime';
@@ -13,9 +14,6 @@ export default function Tile(props: TileProps) {
   const [thisStatusName, setThisStatusName] = useState('');
   const [thisAssigneeName, setThisAssigneeName] = useState('');
   const [thisCustomerNumber, setThisCustomerNumber] = useState('');
-
-  console.log('props.selectedCategory', props.selectedCategory);
-  console.log('props.category', props.category);
 
   // get StatusBoxColor according to status, convert timestamps into readable date-times and find names of information where ids match
 
@@ -36,7 +34,11 @@ export default function Tile(props: TileProps) {
     setCreatedDatetime(transformTimestampIntoDatetime(props.created));
     setLastResponseDatetime(transformTimestampIntoDatetime(props.lastResponse));
 
-    if (props.categories.length) {
+    if (
+      props.categories.length &&
+      props.categories.length &&
+      props.statuses.length
+    ) {
       setThisPriorityName(
         props.priorities.find((priority) => priority.id === props.priority)!
           .priority_name,
@@ -83,22 +85,6 @@ export default function Tile(props: TileProps) {
     <button
       css={screenWidth && tileStyles(screenWidth)}
       onClick={() => props.handleTileClick(props.ticketId)}
-      // style={{
-      //   display:
-      //     !props.selectedCategory || props.category === props.selectedCategory // selectedCategory doesn't apply
-      //       ? //
-      //         !props.filter && thisStatusName !== 'CLOSED' // then, check for filter
-      //         ? 'flex'
-      //         : props.filter === thisStatusName ||
-      //           props.filter === thisPriorityName ||
-      //           (props.filter === 'unassigned' &&
-      //             !props.assigneeId &&
-      //             thisStatusName !== 'CLOSED')
-      //         ? 'flex'
-      //         : 'none'
-      //       : //
-      //         'none',
-      // }}
     >
       <div className="rectangular-box">
         <div className="status-box" style={{ backgroundColor: statusBoxColor }}>
@@ -148,7 +134,26 @@ export default function Tile(props: TileProps) {
           </p>
         </div>
         <div className="assigned-box">
-          <img src="person.png" alt="a person" />
+          <Image
+            src={
+              thisAssigneeName && thisAssigneeName !== 'not assigned'
+                ? `/${thisAssigneeName.toLowerCase()}.png`
+                : '/question-mark-icon.jpg'
+            }
+            alt="a person"
+            width="54px"
+            height="54px"
+          />
+
+          {/* <img
+            src={
+              thisAssigneeName && thisAssigneeName !== 'not assigned'
+                ? `${thisAssigneeName.toLowerCase()}.png`
+                : 'question-mark-icon.jpg'
+            }
+            alt="a person"
+          /> */}
+
           <div>
             <p>assigned</p>
             <p>{thisAssigneeName}</p>

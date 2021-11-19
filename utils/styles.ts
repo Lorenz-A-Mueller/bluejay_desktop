@@ -481,14 +481,15 @@ export const tileStyles = (screenWidth: number) => css`
       display: flex;
       flex-direction: row;
       border: 0;
+      padding-left: ${scale[6]}px;
       p {
         &:first-of-type {
           font-size: ${scale[6]}px;
         }
       }
-      img {
+      /* img {
         margin-left: ${scale[6]}px;
-      }
+      } */
       > div {
         display: flex;
         flex-direction: column;

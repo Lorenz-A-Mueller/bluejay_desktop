@@ -39,6 +39,7 @@ export default function Tickets(props: TicketsProps) {
   const [refreshIconAngle, setRefreshIconAngle] = useState(0);
 
   // fetch all Data necessary for associating id keys with corresponding data in tiles
+  // TODO make 1 query out of those
 
   const { data: getPrioritiesQueryData } = useQuery(getPrioritiesQuery, {
     onCompleted: () => {
@@ -85,13 +86,33 @@ export default function Tickets(props: TicketsProps) {
 
   // get all tickets
 
-  const [getTickets, { data: getAllTicketsQueryData }] = useLazyQuery(
+  const [
+    getTickets,
+    { error: getAllTicketsQueryError, data: getAllTicketsQueryData },
+  ] = useLazyQuery(
     getAllTicketsQuery,
+
     {
+      onError: (err) => {
+        console.log('err: ', err);
+      },
       // fetchPolicy: 'cache-and-network', // maybe
       fetchPolicy: 'network-only',
     },
   ); // TODO error-handling / loading-handling
+
+  // define a ticketErrorMessage that is displayed when tickets cannot be loaded
+
+  let ticketErrorMessage = '';
+  if (
+    getAllTicketsQueryError?.networkError &&
+    typeof window !== 'undefined' &&
+    !window.navigator.onLine
+  ) {
+    ticketErrorMessage = 'Lost Internet connection. Could not load tickets.';
+  } else {
+    ticketErrorMessage = 'An Error occurred. Could not load tickets.';
+  }
 
   // refresh every minute automatically
 
@@ -202,6 +223,7 @@ export default function Tickets(props: TicketsProps) {
               ? 'Urgent Tickets'
               : 'Archive'}
           </h1>
+          {getAllTicketsQueryError && <p>{ticketErrorMessage}</p>}
           {getAllTicketsQueryData &&
             getAllTicketsQueryData.tickets.map((ticket: Ticket) => {
               //
@@ -217,13 +239,13 @@ export default function Tickets(props: TicketsProps) {
                 !ticket.ticket_number.startsWith(searchBarInput) &&
                 !ticket.ticket_number.slice(1).startsWith(searchBarInput)
               ) {
-                return <div />;
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
               }
 
               // don't render if a set selectedCategory does not match ticket.category
 
               if (selectedCategory && ticket.category !== selectedCategory) {
-                return <div />;
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
 
                 // don't render if there is no filter but ticket.status = closed (=> show pending tickets)
               } else if (
@@ -231,7 +253,7 @@ export default function Tickets(props: TicketsProps) {
                 statuses.find((status) => status.id === ticket.status)
                   ?.status_name === 'CLOSED'
               ) {
-                return <div />;
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
 
                 // dont' render if there is a filter of "NEW" or "CLOSED" and that does not correspond to ticket.status
               } else if (
@@ -239,7 +261,7 @@ export default function Tickets(props: TicketsProps) {
                 statuses.find((status) => status.status_name === props.filter)!
                   .id !== ticket.status
               ) {
-                return <div />;
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
 
                 // dont' render if there is a filter of "urgent"  AND that does not correspond to ticket.priority or status of ticket is "closed".
               } else if (
@@ -250,7 +272,7 @@ export default function Tickets(props: TicketsProps) {
                   statuses.find((status) => status.id === ticket.status)
                     ?.status_name === 'CLOSED')
               ) {
-                return <div />;
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
 
                 // dont' render if there is a filter of "unassigned" AND ticket.assigneeId exists or status of ticket is "closed".
               } else if (
@@ -259,13 +281,13 @@ export default function Tickets(props: TicketsProps) {
                   statuses.find((status) => status.id === ticket.status)
                     ?.status_name === 'CLOSED')
               ) {
-                return <div />;
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
 
                 // ***************
               } else {
                 return (
                   <Tile
-                    key={`tile-key-${ticket.created}`}
+                    key={`tile-key-${ticket.ticket_number}`}
                     ticketId={ticket.id}
                     status={ticket.status}
                     ticketNumber={ticket.ticket_number}
@@ -314,6 +336,7 @@ export const getServerSideProps = async (
 
   const sessionToken = context.req.cookies.employeeSessionToken;
   const apiUrl = 'http://localhost:4000/graphql';
+  // try {
   const employeeSessionFetchRes = await employeeSessionFetch(
     sessionToken,
     apiUrl,
@@ -349,3 +372,9 @@ export const getServerSideProps = async (
     },
   };
 };
+// catch {
+//   return {
+//     props: {},
+//   };
+// }
+// };

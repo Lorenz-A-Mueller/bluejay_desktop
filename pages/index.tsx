@@ -31,11 +31,13 @@ export default function Home() {
 
       router.push(destination);
     },
-    onError: () => {
+    onError: (error) => {
       setEmployeeNumberInput('');
       setEmployeePasswordInput('');
       // setAccessDenied(true);
       setWasClicked(false);
+
+      console.log('error: ', error.message);
     },
     skip: !wasClicked,
     fetchPolicy: 'network-only',
@@ -107,7 +109,7 @@ export const getServerSideProps = async (
   if (data.data.employeeSession) {
     return {
       redirect: {
-        destination: '/allTickets',
+        destination: '/tickets',
         permanent: false,
       },
     };
