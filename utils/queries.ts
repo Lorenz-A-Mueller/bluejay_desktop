@@ -301,3 +301,12 @@ export const getMessagePanelInfoQuery = gql`
     }
   }
 `;
+
+export const changeTicketLastResponseMutation = gql`
+  mutation ($ticketID: ID!) {
+    changeTicketLastResponse(id: $ticketID) {
+      id
+      last_response
+    }
+  }
+`;

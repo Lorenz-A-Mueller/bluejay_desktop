@@ -211,12 +211,10 @@ export default function Tickets(props: TicketsProps) {
             }}
           >
             <Image src={refreshIcon} alt="two arrows in form of a circle" />
-            {/* <img src="refresh-icon.jpg" alt="two arrows in form of a circle" /> */}
           </button>
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
           <button onClick={handleLogOutClick}>
             <Image src={logoutIcon} alt="a stylized door with an arrow" />
-            {/* <img src="logout-icon.png" alt="a stylized door with an arrow" /> */}
           </button>
         </div>
         <div className="tile-area">

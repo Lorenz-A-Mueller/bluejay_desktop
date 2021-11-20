@@ -2,6 +2,7 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import { useState } from 'react';
 import {
+  changeTicketLastResponseMutation,
   createMessageWithResponderIdMutation,
   getMessagesQuery,
   getTicketInformationQuery,
@@ -56,10 +57,21 @@ export default function MessagePanel(props: MessagePanelProps) {
       getMessages();
       setNewMessageText('');
       props.setOngoingTicket();
+      setLastResponse();
     },
     onError: (error) => {
       console.log('error: ', error);
       router.push('/');
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const [setLastResponse] = useMutation(changeTicketLastResponseMutation, {
+    variables: {
+      ticketID: 'id' in ticketData && ticketData.id,
+    },
+    onCompleted: (thisData) => {
+      console.log('setLastResponseData: ', thisData);
     },
     fetchPolicy: 'network-only',
   });
