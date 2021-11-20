@@ -1,10 +1,12 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import ChooseDateBar from '../components/ChooseDateBar';
 import SideBar from '../components/SideBar';
 import TicketReport from '../components/TicketReport';
+import logoutIcon from '../public/logout-icon.png';
 import extractTicketReportData from '../utils/extractTicketReportData';
 import {
   deleteSessionMutation,
@@ -73,7 +75,7 @@ export default function Data(props: DataProps) {
         <div className="top-bar">
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
           <button onClick={() => logOut()}>
-            <img src="logout-icon.png" alt="a stylized door with an arrow" />
+            <Image src={logoutIcon} alt="a stylized door with an arrow" />
           </button>
         </div>
         <div>
@@ -110,7 +112,7 @@ export const getServerSideProps = async (
   if (!employeeSessionFetchData.data.employeeSession) {
     return {
       redirect: {
-        destination: '/?returnTo=/tickets',
+        destination: '/?returnTo=/data',
         permanent: false,
       },
     };

@@ -1,6 +1,7 @@
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 // import { initializeApollo } from '../apollo/client'; TODO?
 import MessagePanel from '../components/MessagePanel';
@@ -8,6 +9,8 @@ import SearchBar from '../components/SearchBar';
 import SelectCategory from '../components/SelectCategory';
 import Sidebar from '../components/SideBar';
 import Tile from '../components/Tile';
+import logoutIcon from '../public/logout-icon.png';
+import refreshIcon from '../public/refresh-icon.jpg';
 import {
   changeTicketStatusMutation,
   deleteSessionMutation,
@@ -134,10 +137,13 @@ export default function Tickets(props: TicketsProps) {
 
   const [deleteTicket] = useMutation(deleteTicketMutation, {
     variables: { ticketID: openedTicket },
-    onCompleted: (deletedTicketData) => {
-      console.log(deletedTicketData);
+    onCompleted: () => {
       setShowMessagePanel(false);
       getTickets();
+    },
+    onError: (error) => {
+      console.log('error: ', error);
+      router.push('/');
     },
     fetchPolicy: 'network-only',
   });
@@ -204,11 +210,13 @@ export default function Tickets(props: TicketsProps) {
               transition: 'transform 1s',
             }}
           >
-            <img src="refresh-icon.jpg" alt="two arrows in form of a circle" />
+            <Image src={refreshIcon} alt="two arrows in form of a circle" />
+            {/* <img src="refresh-icon.jpg" alt="two arrows in form of a circle" /> */}
           </button>
           <p style={{ color: 'white' }}>{props.employee.first_name}</p>
           <button onClick={handleLogOutClick}>
-            <img src="logout-icon.png" alt="a stylized door with an arrow" />
+            <Image src={logoutIcon} alt="a stylized door with an arrow" />
+            {/* <img src="logout-icon.png" alt="a stylized door with an arrow" /> */}
           </button>
         </div>
         <div className="tile-area">
@@ -280,6 +288,13 @@ export default function Tickets(props: TicketsProps) {
                 (ticket.assignee_id ||
                   statuses.find((status) => status.id === ticket.status)
                     ?.status_name === 'CLOSED')
+              ) {
+                return <div key={`tile-key-${ticket.ticket_number}`} />;
+
+                // don't render if employee is not an admin and the ticket is not assigned to them
+              } else if (
+                !props.isAdmin &&
+                ticket.assignee_id !== props.employee.id
               ) {
                 return <div key={`tile-key-${ticket.ticket_number}`} />;
 

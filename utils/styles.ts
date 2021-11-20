@@ -138,21 +138,13 @@ export const sideBarStyles = (screenHeight: number) => css`
     height: ${(scale[16] * screenHeight) / 1024}px;
     border-radius: 100%;
     margin-top: ${(scale[7] * screenHeight) / 1024}px;
-    img {
-      height: ${(scale[16] * screenHeight) / 1024}px;
-      margin-right: ${scale[5]};
-    }
   }
   button {
     height: ${(scale[14] * screenHeight) / 1024}px;
-    height: ${(scale[14] * screenHeight) / 1024}px;
+    width: ${(scale[14] * screenHeight) / 1024}px;
     margin-top: ${(scale[8] * screenHeight) / 1024}px;
     margin-right: ${scale[5]};
     background-color: transparent;
-
-    img {
-      height: 100%;
-    }
   }
   .ticket-filter-box {
     display: flex;
@@ -200,10 +192,6 @@ export const sideBarStyles = (screenHeight: number) => css`
       margin-top: ${(scale[6] * screenHeight) / 1024}px;
     }
   }
-  > img {
-    height: ${(scale[14] * screenHeight) / 1024}px;
-    margin-top: ${(scale[8] * screenHeight) / 1024}px;
-  }
 `;
 
 export const ticketsStyles = (screenWidth: number) => css`
@@ -229,10 +217,8 @@ export const ticketsStyles = (screenWidth: number) => css`
     button {
       margin-left: ${(scale[7] * screenWidth) / 1440}px;
       height: ${scale[10]}px;
+      width: ${scale[10]}px;
       background-color: transparent;
-      img {
-        height: 100%;
-      }
     }
   }
   .tile-area {
@@ -781,17 +767,16 @@ export const dataStyles = (screenWidth: number) => css`
     height: ${scale[14]}px;
     flex-shrink: 0;
     > p {
-      margin-left: ${(scale[11] * screenWidth) / 1440}px;
+      margin-left: auto;
       font-size: ${scale[9]}px;
       font-weight: bold;
     }
     button {
       margin-left: ${(scale[7] * screenWidth) / 1440}px;
+      margin-right: ${(scale[11] * screenWidth) / 1440}px;
       height: ${scale[10]}px;
+      width: ${scale[10]}px;
       background-color: transparent;
-      img {
-        height: 100%;
-      }
     }
   }
   > div {
@@ -980,7 +965,8 @@ export const ticketReportStyles = css`
       .scale-box {
         height: ${scale[8] * 6}px;
         width: ${scale[11]}px;
-        margin-right: ${scale[6]}px;
+        margin-right: ${scale[5]}px;
+        margin-bottom: ${scale[6]}px;
         display: flex;
         flex-direction: column;
         align-items: flex-end;

@@ -1,4 +1,15 @@
 import { useRouter } from 'next/dist/client/router';
+import Image from 'next/image';
+import allEmailIcon from '../public/all-email-icon.png';
+import archiveIcon from '../public/archive-icon.jpg';
+import chatIcon from '../public/chat-icon.png';
+import dataIcon from '../public/data-icon.png';
+import emailUnassignedIcon from '../public/email-unassigned-icon.png';
+import employeesIcon from '../public/employees-icon.png';
+import icon from '../public/icon.png';
+import newMessageIcon from '../public/new-message-icon.jpg';
+import settingsIcon from '../public/settings-icon.png';
+import urgentIcon from '../public/urgent-icon.png';
 import { employeeDataFetch } from '../utils/queries';
 import { sideBarStyles } from '../utils/styles';
 import { SideBarProps } from '../utils/types';
@@ -11,7 +22,7 @@ export default function SideBar(props: SideBarProps) {
     <>
       <div css={sideBarStyles(useWindowDimensions().height!)}>
         <div className="circle">
-          <img src="icon.png" alt="BlueJay logo" />
+          <Image src={icon} alt="a bluejay" />
         </div>
 
         <div className="ticket-filter-box">
@@ -35,7 +46,7 @@ export default function SideBar(props: SideBarProps) {
                 : {}
             }
           >
-            <img src="all-email-icon.png" alt="two letters" />
+            <Image src={allEmailIcon} alt="two letters" />
           </button>
           <button
             onClick={() => {
@@ -54,7 +65,7 @@ export default function SideBar(props: SideBarProps) {
                 : {}
             }
           >
-            <img src="new-message-icon.jpg" alt="a letter with the number 1" />
+            <Image src={newMessageIcon} alt="a letter with the number 1" />
           </button>
           <button
             onClick={() => {
@@ -76,36 +87,35 @@ export default function SideBar(props: SideBarProps) {
                 : {}
             }
           >
-            <img
-              src="urgent-icon.png"
-              alt="a letter with an exclamation mark"
-            />
+            <Image src={urgentIcon} alt="a letter with an exclamation mark" />
           </button>
-          <button
-            onClick={() => {
-              props.setFilter((previous) => {
-                return previous === 'unassigned' ? '' : 'unassigned';
-              });
-              router.push('/tickets');
-            }}
-            style={
-              'filter' in props && props.filter === 'unassigned'
-                ? {
-                    marginLeft: '68px',
-                    borderRadius: '8px',
-                    backgroundColor: '#C4C4C4',
-                    padding: '0 8px 8px 0',
-                    boxSizing: 'content-box',
-                    marginBottom: '-8px',
-                  }
-                : {}
-            }
-          >
-            <img
-              src="email-unassigned-icon.png"
-              alt="an open letter with an @-symbol"
-            />
-          </button>
+          {'employee' in props && 'isAdmin' in props && props.isAdmin && (
+            <button
+              onClick={() => {
+                props.setFilter((previous) => {
+                  return previous === 'unassigned' ? '' : 'unassigned';
+                });
+                router.push('/tickets');
+              }}
+              style={
+                'filter' in props && props.filter === 'unassigned'
+                  ? {
+                      marginLeft: '68px',
+                      borderRadius: '8px',
+                      backgroundColor: '#C4C4C4',
+                      padding: '0 8px 8px 0',
+                      boxSizing: 'content-box',
+                      marginBottom: '-8px',
+                    }
+                  : {}
+              }
+            >
+              <Image
+                src={emailUnassignedIcon}
+                alt="an opened letter with an @-symbol"
+              />
+            </button>
+          )}
           <button
             onClick={() => {
               props.setFilter((previous) => {
@@ -126,22 +136,30 @@ export default function SideBar(props: SideBarProps) {
                 : {}
             }
           >
-            <img src="archive-icon.jpg" alt="documents in a drawer" />
+            <Image src={archiveIcon} alt="documents in a drawer" />
           </button>
         </div>
-        <img src="chat-icon.png" alt="a chat icon" />
-        <button
-          onClick={() => {
-            props.setFilter('none');
-            router.push('/data');
-          }}
-        >
-          <img src="data-icon.png" alt="a graph icon" />
+        <button>
+          <Image src={chatIcon} alt="two speech bubbles" />
         </button>
         {'employee' in props && 'isAdmin' in props && props.isAdmin && (
-          <img src="employees-icon.png" alt="an employees icon" />
+          <button
+            onClick={() => {
+              props.setFilter('none');
+              router.push('/data');
+            }}
+          >
+            <Image src={dataIcon} alt="a pie-chart" />
+          </button>
         )}
-        <img src="settings-icon.png" alt="a settings icon" />
+        {'employee' in props && 'isAdmin' in props && props.isAdmin && (
+          <button>
+            <Image src={employeesIcon} alt="an employees icon" />
+          </button>
+        )}
+        <button>
+          <Image src={settingsIcon} alt="a settings icon" />
+        </button>
       </div>
       {props.children}
     </>

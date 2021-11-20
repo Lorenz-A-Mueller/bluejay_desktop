@@ -1,4 +1,5 @@
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { useRouter } from 'next/dist/client/router';
 import { useState } from 'react';
 import {
   createMessageWithResponderIdMutation,
@@ -15,6 +16,7 @@ export default function MessagePanel(props: MessagePanelProps) {
   const [messages, setMessages] = useState([]);
   const [newMessageText, setNewMessageText] = useState('');
   const [refreshIconAngle, setRefreshIconAngle] = useState(0);
+  const router = useRouter();
 
   // query data about clicked-on ticket
 
@@ -54,6 +56,10 @@ export default function MessagePanel(props: MessagePanelProps) {
       getMessages();
       setNewMessageText('');
       props.setOngoingTicket();
+    },
+    onError: (error) => {
+      console.log('error: ', error);
+      router.push('/');
     },
     fetchPolicy: 'network-only',
   });
